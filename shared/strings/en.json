@@ -39,6 +39,18 @@
     "locationPermissionDenied": "Location access is required to spot potholes. Enable it in Settings.",
     "captureReady": "Hold steady and tap the shutter when you are safely stopped."
   },
+  "upload": {
+    "blurring": "Blurring faces and number plates…",
+    "progress": "Uploading photo…",
+    "submitting": "Submitting spot…",
+    "retry": "Retry",
+    "failed": "Upload failed. Check your connection and try again.",
+    "blurFailed": "We could not blur faces or plates on this photo. Take another shot.",
+    "success": "Spot submitted — thanks for helping fix the roads!",
+    "pendingModeration": "Photo received and pending moderation before it appears publicly.",
+    "nameRequired": "Give the pothole a name before submitting.",
+    "signInRequired": "Sign in to upload your spot."
+  },
   "pothole": {
     "statusOpen": "Open",
     "statusFixed": "Fixed",

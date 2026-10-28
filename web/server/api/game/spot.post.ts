@@ -1,4 +1,5 @@
 import type { SpotReportRequest, SpotReportResponse } from '@shared/types'
+import { ingestQuarantineSpotPhoto } from '../../utils/spotPhotoQuarantine'
 
 export default defineEventHandler(async (event): Promise<SpotReportResponse> => {
   const userId = await requireUserId(event)
@@ -8,7 +9,14 @@ export default defineEventHandler(async (event): Promise<SpotReportResponse> => 
     throw createError({ statusCode: 400, statusMessage: 'Invalid payload' })
   }
 
+  const expectedPrefix = `${userId}/`
+  if (!body.photo_path.startsWith(expectedPrefix) || body.photo_path.includes('..')) {
+    throw createError({ statusCode: 400, statusMessage: 'photo_path must be a quarantine path under your user folder' })
+  }
+
   const supabase = useServerSupabase(event)
+
+  const ingest = await ingestQuarantineSpotPhoto(supabase, userId, body.photo_path)
 
   const { data: lookup } = await supabase.rpc('lookup_ward_and_authority', {
     p_lat: body.lat,
@@ -25,7 +33,7 @@ export default defineEventHandler(async (event): Promise<SpotReportResponse> => 
       road_ref: body.road_ref ?? null,
       authority: wardRow?.authority ?? null,
       ward_id: wardRow?.ward_id ?? null,
-      photo_path: body.photo_path,
+      photo_path: ingest.publishedPhotoPath,
     })
     .select('id')
     .single()
@@ -40,6 +48,8 @@ export default defineEventHandler(async (event): Promise<SpotReportResponse> => 
       pothole_id: pothole.id,
       reporter_id: userId,
       photo_path: body.photo_path,
+      photo_moderation_status: ingest.moderationStatus,
+      published_photo_path: ingest.publishedPhotoPath,
       location: `POINT(${body.lng} ${body.lat})`,
     })
     .select('id')
@@ -68,5 +78,7 @@ export default defineEventHandler(async (event): Promise<SpotReportResponse> => 
     ward_id: wardRow?.ward_id ?? null,
     authority: wardRow?.authority ?? null,
     points_awarded: 0,
+    photo_moderation_status: ingest.moderationStatus,
+    published_photo_path: ingest.publishedPhotoPath,
   }
 })

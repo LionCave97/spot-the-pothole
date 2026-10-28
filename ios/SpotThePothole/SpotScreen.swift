@@ -1,4 +1,3 @@
-import AVFoundation
 import SwiftUI
 
 struct SpotScreen: View {
@@ -7,6 +6,12 @@ struct SpotScreen: View {
     @State private var gateMessage = L10n.spotWaitingForGps
     @State private var captureEnabled = false
     @State private var cameraAuthorized = false
+    @State private var captured: CapturedSpotPhoto?
+    @State private var potholeName = ""
+    @State private var statusMessage: String?
+    @State private var isBusy = false
+
+    private let authProvider: AuthSessionProviding = DemoAuthSessionProvider()
 
     var body: some View {
         NavigationStack {
@@ -17,12 +22,30 @@ struct SpotScreen: View {
                     .foregroundStyle(captureEnabled ? Color.green : Color.red)
                     .font(.callout)
 
-                if cameraAuthorized {
+                if let captured {
+                    TextField(L10n.spotNamePlaceholder, text: $potholeName)
+                        .textFieldStyle(.roundedBorder)
+                    if let statusMessage {
+                        Text(statusMessage).font(.callout).foregroundStyle(.secondary)
+                    }
+                    Button(L10n.spotSubmit) {
+                        submit(captured)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(isBusy || potholeName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    Button(L10n.spotRetake) {
+                        self.captured = nil
+                        statusMessage = nil
+                    }
+                    .disabled(isBusy)
+                } else if cameraAuthorized {
                     LiveCameraView(
                         coordinator: cameraCoordinator,
                         isCaptureEnabled: captureEnabled
-                    ) { _ in
-                        // DEV-202 adds blur, upload, and spot submission.
+                    ) { data in
+                        if let location = locationService.latest {
+                            captured = CapturedSpotPhoto(jpegData: data, location: location)
+                        }
                     }
                     .frame(maxHeight: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -60,6 +83,56 @@ struct SpotScreen: View {
         }
     }
 
+    private func submit(_ photo: CapturedSpotPhoto) {
+        let trimmed = potholeName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else {
+            statusMessage = L10n.uploadNameRequired
+            return
+        }
+        isBusy = true
+        statusMessage = L10n.uploadBlurring
+        Task {
+            do {
+                try await SpotUploadService.submitSpot(
+                    capture: photo,
+                    name: trimmed,
+                    auth: authProvider,
+                    supabaseUrl: ProcessInfo.processInfo.environment["SUPABASE_URL"] ?? "http://127.0.0.1:54321",
+                    webApiBase: ProcessInfo.processInfo.environment["WEB_API_BASE"] ?? "http://127.0.0.1:3000"
+                ) { progress in
+                    Task { @MainActor in
+                        statusMessage = switch progress {
+                        case .blurring: L10n.uploadBlurring
+                        case .uploading: L10n.uploadProgress
+                        case .submitting: L10n.uploadSubmitting
+                        case .done: L10n.uploadPendingModeration
+                        }
+                    }
+                }
+                await MainActor.run {
+                    captured = nil
+                    potholeName = ""
+                    isBusy = false
+                }
+            } catch SpotUploadError.signInRequired {
+                await MainActor.run {
+                    statusMessage = L10n.uploadSignInRequired
+                    isBusy = false
+                }
+            } catch SpotUploadError.blurFailed {
+                await MainActor.run {
+                    statusMessage = L10n.uploadBlurFailed
+                    isBusy = false
+                }
+            } catch {
+                await MainActor.run {
+                    statusMessage = L10n.uploadFailed
+                    isBusy = false
+                }
+            }
+        }
+    }
+
     private func requestCameraAccess() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
@@ -73,3 +146,5 @@ struct SpotScreen: View {
         }
     }
 }
+
+import AVFoundation

@@ -39,6 +39,12 @@ import za.spotthepothole.app.spot.SpotCaptureGate
 import za.spotthepothole.app.spot.SpotLocationSample
 import za.spotthepothole.app.spot.SpotLocationTracker
 import za.spotthepothole.app.ui.strings.AppStrings
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.rememberCoroutineScope
+import za.spotthepothole.app.auth.AuthSessionProvider
+import za.spotthepothole.app.spot.SpotUploadProgress
+import za.spotthepothole.app.spot.SpotUploadRepository
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 @Composable
@@ -49,7 +55,7 @@ fun MapScreen(strings: AppStrings) {
 @Composable
 fun SpotScreen(
     strings: AppStrings,
-    onPhotoCaptured: (CapturedSpotPhoto) -> Unit = {},
+    authSessionProvider: AuthSessionProvider = AuthSessionProvider { null },
 ) {
     val context = LocalContext.current
     var locationSample by remember { mutableStateOf<SpotLocationSample?>(null) }
@@ -57,6 +63,13 @@ fun SpotScreen(
     var captureEnabled by remember { mutableStateOf(false) }
     var previewError by remember { mutableStateOf<String?>(null) }
     var imageCapture by remember { mutableStateOf<ImageCapture?>(null) }
+    var captured by remember { mutableStateOf<CapturedSpotPhoto?>(null) }
+    var potholeName by remember { mutableStateOf("") }
+    var statusMessage by remember { mutableStateOf<String?>(null) }
+    var isBusy by remember { mutableStateOf(false) }
+
+    val uploadRepository = remember { SpotUploadRepository(authSessionProvider) }
+    val scope = rememberCoroutineScope()
 
     val permissions = arrayOf(
         Manifest.permission.CAMERA,
@@ -130,6 +143,80 @@ fun SpotScreen(
             return@Column
         }
 
+        if (captured != null) {
+            OutlinedTextField(
+                value = potholeName,
+                onValueChange = { potholeName = it },
+                label = { Text(strings.spotNameLabel) },
+                placeholder = { Text(strings.spotNamePlaceholder) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+            )
+            statusMessage?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Button(
+                onClick = {
+                    if (potholeName.isBlank()) {
+                        statusMessage = strings.uploadNameRequired
+                        return@Button
+                    }
+                    val photo = captured ?: return@Button
+                    isBusy = true
+                    statusMessage = strings.uploadBlurring
+                    scope.launch {
+                        val result = uploadRepository.submitSpot(photo, potholeName.trim()) { progress ->
+                            statusMessage = when (progress) {
+                                SpotUploadProgress.Blurring -> strings.uploadBlurring
+                                is SpotUploadProgress.Uploading -> strings.uploadProgress
+                                SpotUploadProgress.Submitting -> strings.uploadSubmitting
+                                SpotUploadProgress.Done -> strings.uploadPendingModeration
+                            }
+                        }
+                        isBusy = false
+                        if (result.isSuccess) {
+                            captured = null
+                            potholeName = ""
+                        } else {
+                            val err = result.exceptionOrNull()
+                            statusMessage = when (err?.message) {
+                                "sign_in_required" -> strings.uploadSignInRequired
+                                else -> if (statusMessage == strings.uploadBlurring) {
+                                    strings.uploadBlurFailed
+                                } else {
+                                    strings.uploadFailed
+                                }
+                            }
+                        }
+                    }
+                },
+                enabled = !isBusy,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+            ) {
+                Text(strings.spotSubmit)
+            }
+            Button(
+                onClick = {
+                    captured = null
+                    statusMessage = null
+                },
+                enabled = !isBusy,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            ) {
+                Text(strings.spotRetake)
+            }
+            return@Column
+        }
+
         Box(modifier = Modifier.weight(1f)) {
             LiveCameraPreview(
                 onImageCaptureReady = { imageCapture = it },
@@ -158,7 +245,7 @@ fun SpotScreen(
                             image.close()
                             val loc = locationSample ?: return
                             val stripped = JpegExifStripper.stripExif(bytes)
-                            onPhotoCaptured(CapturedSpotPhoto(stripped, loc))
+                            captured = CapturedSpotPhoto(stripped, loc)
                         }
 
                         override fun onError(exception: ImageCaptureException) {

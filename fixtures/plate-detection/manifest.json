@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "description": "Openly licensed South African number plate images for evaluating the Phase 1 OCR+regex plate heuristic. Images are not committed; run download-fixtures.sh.",
+  "attribution": "See sourcePage and license per entry. Do not use for training without respecting each file license.",
+  "images": [
+    {
+      "id": "western-cape-02",
+      "commonsTitle": "South Africa license plate - Western Cape 02.jpg",
+      "downloadUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/South_Africa_license_plate_-_Western_Cape_02.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:South_Africa_license_plate_-_Western_Cape_02.jpg",
+      "license": "CC BY-SA 4.0",
+      "author": "Dickelbers",
+      "expectedPlates": ["CA 101 123"],
+      "plateImage": true
+    },
+    {
+      "id": "limpopo-sample",
+      "commonsTitle": "KFZ-SA-Limpopo.jpg",
+      "downloadUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/KFZ-SA-Limpopo.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:KFZ-SA-Limpopo.jpg",
+      "license": "CC BY-SA 3.0",
+      "author": "Wikipedia contributors",
+      "expectedPlates": ["BP 45 678 LP"],
+      "plateImage": true
+    },
+    {
+      "id": "gauteng-bmw-m6",
+      "commonsTitle": "BMW M6 Convertible (8363326897).jpg",
+      "downloadUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/BMW_M6_Convertible_(8363326897).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:BMW_M6_Convertible_(8363326897).jpg",
+      "license": "CC BY 2.0",
+      "author": "Brian Snelson",
+      "expectedPlates": ["BR 42 JGP"],
+      "plateImage": true
+    },
+    {
+      "id": "historic-pretoria-1978",
+      "commonsTitle": "SOUTH AFRICA, TRANSVAAL, PRETORIA pre 1978 LICENSE PLATE - Flickr - woody1778a.jpg",
+      "downloadUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/SOUTH_AFRICA,_TRANSVAAL,_PRETORIA_pre_1978_LICENSE_PLATE_-_Flickr_-_woody1778a.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:SOUTH_AFRICA,_TRANSVAAL,_PRETORIA_pre_1978_LICENSE_PLATE_-_Flickr_-_woody1778a.jpg",
+      "license": "CC BY-SA 2.0",
+      "author": "woody1778a",
+      "expectedPlates": [],
+      "plateImage": true,
+      "legacyFormat": true
+    },
+    {
+      "id": "negative-bastille-festival",
+      "commonsTitle": "Bastille Festival 80.jpg",
+      "downloadUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Bastille_Festival_80.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Bastille_Festival_80.jpg",
+      "license": "CC BY-SA 4.0",
+      "author": "Photographer on Commons",
+      "expectedPlates": [],
+      "plateImage": false
+    }
+  ]
+}
