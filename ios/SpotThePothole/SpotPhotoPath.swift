@@ -4,9 +4,8 @@ enum SpotPhotoConstants {
     static let maxBytes = 1_500_000
     static let maxLongEdgePx = 1920
     static let jpegQuality: CGFloat = 0.82
-    static let blurVerifiedHeader = "x-spot-blur-verified"
-    static let blurVerifiedValue = "on-device"
-    static let storageBucket = "spot-photos"
+    static let quarantineBucket = "spot-photos-quarantine"
+    static let publishedBucket = "spot-photos"
 }
 
 enum SpotPhotoPath {

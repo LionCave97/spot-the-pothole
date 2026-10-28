@@ -6,7 +6,8 @@ export const SPOT_PHOTO_MAX_LONG_EDGE_PX = 1920
 
 export const SPOT_PHOTO_JPEG_QUALITY = 0.82
 
-/** Client header sent to `/api/game/spot` after on-device blur succeeds. */
-export const SPOT_BLUR_VERIFIED_HEADER = 'x-spot-blur-verified'
+export const SPOT_PHOTOS_QUARANTINE_BUCKET = 'spot-photos-quarantine'
 
-export const SPOT_BLUR_VERIFIED_ON_DEVICE = 'on-device'
+export const SPOT_PHOTOS_PUBLISHED_BUCKET = 'spot-photos'
+
+export type PhotoModerationStatus = 'pending' | 'published' | 'rejected'

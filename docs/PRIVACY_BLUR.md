@@ -1,28 +1,38 @@
 # Privacy blur for spot photos
 
-Spot photos may include bystanders or vehicle number plates. Mobile clients **must** run on-device face and plate detection, blur those regions, and upload **only** the blurred JPEG.
+Spot photos may include bystanders or vehicle number plates. Privacy is enforced in **two layers** — the server never trusts client headers.
 
-## On-device (required)
+## Layer 1 — on-device (clients)
 
 - **Android:** ML Kit face detection + text recognition (plate-shaped tokens), then region blur before upload.
-- **iOS:** Vision face rectangles + text recognition with the same plate heuristics.
+- **iOS:** Vision face rectangles + text recognition with the same plate heuristics (`shared/plates/heuristic.ts`).
 
-The unblurred capture buffer is discarded after processing; only the blurred bytes are uploaded to Supabase Storage.
+The unblurred capture buffer is discarded after processing. Clients upload the on-device-blurred JPEG to the **private quarantine bucket** only.
 
-Clients send `x-spot-blur-verified: on-device` on `POST /api/game/spot` after blur succeeds.
+## Layer 2 — server (authoritative)
 
-## Server fallback (Phase 1 behaviour)
+1. Mobile uploads to `spot-photos-quarantine/{userId}/…` (authenticated insert on own folder; **no public read**).
+2. `POST /api/game/spot` references the quarantine path. The Nuxt route uses the **Supabase service role** to verify the object exists.
+3. Phase 1: a full server-side vision blur pass is not run in-process (too heavy). The report is stored with `photo_moderation_status = pending`. The pothole is created **without** a public `photo_path` until moderation completes.
+4. A future moderation job (service role only) will:
+   - Download the quarantine object
+   - Run server-side face/plate blur (or reject)
+   - Copy the result into `spot-photos/{userId}/…`
+   - Set `published_photo_path`, update pothole `photo_path`, and mark the report `published`
 
-If on-device blur fails, the app must **not** upload the original. The user sees a retry message.
+**Do not** send or check `x-spot-blur-verified` — tampered clients cannot skip server review.
 
-The Nuxt `POST /api/game/spot` route rejects requests without the blur header (HTTP 422). This prevents unblurred uploads if a client is tampered with.
+## Buckets & RLS summary
 
-### Planned server-side fallback (not implemented)
+| Bucket | Public | Client write | Client read | Server (service role) |
+|--------|--------|--------------|-------------|------------------------|
+| `spot-photos-quarantine` | no | insert own `{uid}/*` | own `{uid}/*` only | read/write all |
+| `spot-photos` | yes | **none** | public read | read/write all (publish) |
 
-A future edge function or background job can:
+All promotion from quarantine to public storage must use the service role (aligned with DEV-209 RPC/RLS hardening).
 
-1. Pull the uploaded object from `spot-photos`.
-2. Run a server-side detector (e.g. managed vision API).
-3. Replace the object with a blurred variant or delete and flag the report.
+## Client failure modes
 
-Until that pipeline exists, operators should treat missing blur verification as a hard rejection (current behaviour).
+If on-device blur fails, the app must **not** upload. The user sees a retry message (`upload.blurFailed`).
+
+If upload succeeds but moderation is pending, the UI can show `upload.pendingModeration` after spot submission.

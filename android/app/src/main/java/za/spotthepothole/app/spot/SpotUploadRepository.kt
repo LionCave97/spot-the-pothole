@@ -72,7 +72,7 @@ class SpotUploadRepository(
     }
 
     private fun uploadOnce(token: String, storagePath: String, bytes: ByteArray) {
-        val url = "${BuildConfig.SUPABASE_URL.trimEnd('/')}/storage/v1/object/${SpotPhotoConstants.STORAGE_BUCKET}/$storagePath"
+        val url = "${BuildConfig.SUPABASE_URL.trimEnd('/')}/storage/v1/object/${SpotPhotoConstants.QUARANTINE_BUCKET}/$storagePath"
         val request = Request.Builder()
             .url(url)
             .addHeader("Authorization", "Bearer $token")
@@ -105,7 +105,6 @@ class SpotUploadRepository(
             .url(url)
             .addHeader("Authorization", "Bearer $token")
             .addHeader("Content-Type", "application/json")
-            .addHeader(SpotPhotoConstants.BLUR_VERIFIED_HEADER, SpotPhotoConstants.BLUR_VERIFIED_VALUE)
             .post(payload.toString().toRequestBody("application/json".toMediaType()))
             .build()
 

@@ -1,4 +1,5 @@
-const SPOT_PHOTOS_BUCKET = 'spot-photos'
+export const SPOT_PHOTOS_QUARANTINE_BUCKET = 'spot-photos-quarantine'
+export const SPOT_PHOTOS_PUBLISHED_BUCKET = 'spot-photos'
 
 export function buildSpotPhotoStoragePath(userId: string, fileName: string): string {
   if (!userId || userId.includes('/') || userId.includes('..')) {
@@ -12,7 +13,8 @@ export function buildSpotPhotoStoragePath(userId: string, fileName: string): str
 
 export function spotPhotoObjectUrl(supabaseUrl: string, storagePath: string): string {
   const base = supabaseUrl.replace(/\/$/, '')
-  return `${base}/storage/v1/object/public/${SPOT_PHOTOS_BUCKET}/${storagePath}`
+  return `${base}/storage/v1/object/public/${SPOT_PHOTOS_PUBLISHED_BUCKET}/${storagePath}`
 }
 
-export const SPOT_PHOTOS_BUCKET_ID = SPOT_PHOTOS_BUCKET
+/** @deprecated use SPOT_PHOTOS_PUBLISHED_BUCKET */
+export const SPOT_PHOTOS_BUCKET_ID = SPOT_PHOTOS_PUBLISHED_BUCKET

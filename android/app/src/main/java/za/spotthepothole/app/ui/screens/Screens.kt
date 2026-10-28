@@ -176,7 +176,7 @@ fun SpotScreen(
                                 SpotUploadProgress.Blurring -> strings.uploadBlurring
                                 is SpotUploadProgress.Uploading -> strings.uploadProgress
                                 SpotUploadProgress.Submitting -> strings.uploadSubmitting
-                                SpotUploadProgress.Done -> strings.uploadSuccess
+                                SpotUploadProgress.Done -> strings.uploadPendingModeration
                             }
                         }
                         isBusy = false
