@@ -28,7 +28,16 @@
     "nameLabel": "Give it a name",
     "namePlaceholder": "e.g. Jan Smuts Sinkhole",
     "submit": "Submit report",
-    "gpsRequired": "Turn on location to spot potholes."
+    "gpsRequired": "Turn on location to spot potholes.",
+    "useMobileApp": "Spotting needs a live camera photo with GPS. Use the Android or iOS app — the website cannot capture spots.",
+    "speedTooFast": "Pull over safely before spotting a pothole. Capture is disabled above 10 km/h.",
+    "gpsAccuracyPoor": "Waiting for a clearer GPS fix before you can take a photo.",
+    "waitingForGps": "Getting your location…",
+    "capture": "Take photo",
+    "retake": "Retake",
+    "cameraPermissionDenied": "Camera access is required to spot potholes. Enable it in Settings.",
+    "locationPermissionDenied": "Location access is required to spot potholes. Enable it in Settings.",
+    "captureReady": "Hold steady and tap the shutter when you are safely stopped."
   },
   "pothole": {
     "statusOpen": "Open",

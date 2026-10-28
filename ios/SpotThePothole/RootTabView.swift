@@ -21,12 +21,6 @@ struct MapScreen: View {
     }
 }
 
-struct SpotScreen: View {
-    var body: some View {
-        ScreenScaffold(title: L10n.spot, message: L10n.stub)
-    }
-}
-
 struct PotholeDetailScreen: View {
     let potholeId: String
     var body: some View {
