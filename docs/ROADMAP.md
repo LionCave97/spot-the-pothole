@@ -8,7 +8,7 @@
 - Postgres functions: ~15 m duplicate merge, ward/authority lookup, points after 2 confirmations
 - Android Compose + iOS SwiftUI skeletons (Map, Spot, Detail, Leaderboard, Profile)
 - Fake seed data only; no secrets in git
-- CI: web lint/build, Android Gradle assembleDebug
+- CI: web lint/build, Android Gradle assembleDebug + unit tests, iOS xcodebuild, Supabase migration check
 
 ## Phase 2 (planned)
 

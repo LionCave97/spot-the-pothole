@@ -37,5 +37,60 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
       - run: chmod +x gradlew
-      - run: ./gradlew assembleDebug --no-daemon
+      - run: ./gradlew assembleDebug testDebugUnitTest --no-daemon
+        env:
+          SUPABASE_URL: http://127.0.0.1:54321
+          SUPABASE_ANON_KEY: demo-anon-key
+
+  ios:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - run: xcodegen generate
+      - name: Resolve Swift packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project SpotThePothole.xcodeproj \
+            -scheme SpotThePothole
+      - name: Build and test (Simulator, no signing)
+        run: |
+          xcodebuild \
+            -project SpotThePothole.xcodeproj \
+            -scheme SpotThePothole \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -sdk iphonesimulator \
+            build test \
+            CODE_SIGNING_ALLOWED=NO
+
+  supabase-migrations:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: supabase
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Start local database
+        run: supabase db start
+      - name: Apply migrations and seed
+        run: supabase db reset
+      - name: Run SQL tests (if any)
+        run: |
+          if [ -d tests ] && find tests -name '*.sql' -print -quit | grep -q .; then
+            supabase test db
+          else
+            echo "No supabase/tests SQL files; skipping supabase test db."
+          fi

@@ -10,6 +10,13 @@ settings:
   base:
     SWIFT_VERSION: "5.10"
     PRODUCT_NAME: SpotThePothole
+    SUPABASE_URL: http://127.0.0.1:54321
+    SUPABASE_ANON_KEY: demo-anon-key
+
+packages:
+  Supabase:
+    url: https://github.com/supabase/supabase-swift
+    from: 2.31.0
 
 targets:
   SpotThePothole:
@@ -17,11 +24,27 @@ targets:
     platform: iOS
     sources:
       - path: SpotThePothole
+    dependencies:
+      - package: Supabase
+        product: Supabase
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Spot the Pothole
         INFOPLIST_KEY_NSCameraUsageDescription: Live photo required to spot a pothole.
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: GPS is required to place potholes on the map.
+    info:
+      properties:
+        SUPABASE_URL: $(SUPABASE_URL)
+        SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
     scheme:
-      testTargets: []
+      testTargets:
+        - SpotThePotholeTests
+
+  SpotThePotholeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: SpotThePotholeTests
+    dependencies:
+      - target: SpotThePothole
