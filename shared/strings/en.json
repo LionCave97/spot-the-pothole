@@ -150,7 +150,20 @@
     "reasonSpam": "Spam",
     "reasonUnsafe": "Unsafe or abusive",
     "reasonWrongLocation": "Wrong location",
-    "submitted": "Thanks — moderators will review this."
+    "submitted": "Thanks — moderators will review this.",
+    "photoQueueTitle": "Photo moderation",
+    "photoQueueEmpty": "No photos waiting for review.",
+    "photoQueueHint": "Draw extra blur boxes if needed, then approve or reject.",
+    "approve": "Approve photo",
+    "reject": "Reject photo",
+    "rejectReasonLabel": "Rejection reason",
+    "rejectReasonPlaceholder": "Brief reason (shown internally)",
+    "drawBlurHint": "Drag on the photo to add blur boxes. Click a box to remove it.",
+    "pendingBadge": "Pending review",
+    "flaggedBadge": "Flagged",
+    "signedUrlExpired": "Preview link expired — refresh the queue.",
+    "forbidden": "You do not have moderator access.",
+    "photoPendingPlaceholder": "Photo pending moderator approval"
   },
   "errors": {
     "generic": "Something went wrong. Try again.",

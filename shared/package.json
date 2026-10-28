@@ -12,10 +12,11 @@
     "./media/constants": "./media/constants.ts",
     "./storage/paths": "./storage/paths.ts",
     "./plates/heuristic": "./plates/heuristic.ts",
-    "./validation/username": "./validation/username.ts"
+    "./validation/username": "./validation/username.ts",
+    "./moderation/blur-regions": "./moderation/blur-regions.ts"
   },
   "scripts": {
-    "test": "node --experimental-strip-types --test capture/*.test.ts storage/*.test.ts plates/*.test.ts validation/*.test.ts",
+    "test": "node --experimental-strip-types --test capture/*.test.ts storage/*.test.ts plates/*.test.ts validation/*.test.ts moderation/*.test.ts",
     "eval:plates": "node scripts/eval-plate-heuristic.mjs"
   },
   "devDependencies": {

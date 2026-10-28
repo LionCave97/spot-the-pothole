@@ -146,6 +146,7 @@ declare
   v_lng double precision;
   v_view_lat double precision;
   v_view_lng double precision;
+  v_view_photo text;
 begin
   insert into auth.users (
     instance_id,
@@ -192,10 +193,10 @@ begin
 
   perform set_config('role', 'anon', true);
 
-  select rp.lat, rp.lng
-  into v_view_lat, v_view_lng
+  select rp.lat, rp.lng, rp.photo_path
+  into v_view_lat, v_view_lng, v_view_photo
   from public.reports_public rp
-  where rp.photo_path = 'demo/anonymous-spot.jpg'
+  where rp.pothole_id = v_pothole
   limit 1;
 
   if v_view_lat is null then
@@ -204,6 +205,10 @@ begin
 
   if v_view_lat <> v_lat or v_view_lng <> v_lng then
     raise exception 'reports_public must keep exact spot coordinates';
+  end if;
+
+  if v_view_photo is not null then
+    raise exception 'reports_public must not expose quarantine photo_path while pending';
   end if;
 
   if exists (
@@ -385,6 +390,19 @@ begin
       and policyname = 'Users update own profile safe fields'
   ) then
     raise exception 'missing safe profile update policy';
+  end if;
+end;
+$$;
+
+-- DEV-212: audit log writes are server-only; clients cannot insert.
+do $$
+begin
+  if has_table_privilege('authenticated', 'public.photo_moderation_audit_log', 'INSERT') then
+    raise exception 'authenticated must not INSERT photo_moderation_audit_log';
+  end if;
+
+  if has_table_privilege('anon', 'public.photo_moderation_audit_log', 'SELECT') then
+    raise exception 'anon must not SELECT photo_moderation_audit_log';
   end if;
 end;
 $$;
