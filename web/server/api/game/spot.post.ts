@@ -8,6 +8,19 @@ export default defineEventHandler(async (event): Promise<SpotReportResponse> => 
     throw createError({ statusCode: 400, statusMessage: 'Invalid payload' })
   }
 
+  const expectedPrefix = `${userId}/`
+  if (!body.photo_path.startsWith(expectedPrefix) || body.photo_path.includes('..')) {
+    throw createError({ statusCode: 400, statusMessage: 'photo_path must live under your user folder' })
+  }
+
+  const blurVerified = getHeader(event, 'x-spot-blur-verified')
+  if (blurVerified !== 'on-device') {
+    throw createError({
+      statusCode: 422,
+      statusMessage: 'On-device privacy blur required before spot submission',
+    })
+  }
+
   const supabase = useServerSupabase(event)
 
   const { data: lookup } = await supabase.rpc('lookup_ward_and_authority', {

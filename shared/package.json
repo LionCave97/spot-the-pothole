@@ -8,9 +8,11 @@
     "./types": "./types/index.ts",
     "./constants": "./constants.ts",
     "./capture/constants": "./capture/constants.ts",
-    "./capture/gating": "./capture/gating.ts"
+    "./capture/gating": "./capture/gating.ts",
+    "./media/constants": "./media/constants.ts",
+    "./storage/paths": "./storage/paths.ts"
   },
   "scripts": {
-    "test": "node --experimental-strip-types --test capture/*.test.ts"
+    "test": "node --experimental-strip-types --test capture/*.test.ts storage/*.test.ts"
   }
 }

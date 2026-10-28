@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import za.spotthepothole.app.auth.AuthSessionProvider
 import za.spotthepothole.app.ui.screens.LeaderboardScreen
 import za.spotthepothole.app.ui.screens.MapScreen
 import za.spotthepothole.app.ui.screens.PotholeDetailScreen
@@ -28,7 +29,10 @@ enum class AppRoute(val route: String, val labelKey: (AppStrings) -> String) {
 }
 
 @Composable
-fun SpotThePotholeApp(strings: AppStrings = AppStrings.load()) {
+fun SpotThePotholeApp(
+    strings: AppStrings = AppStrings.load(),
+    authSessionProvider: AuthSessionProvider = AuthSessionProvider { null },
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -59,7 +63,9 @@ fun SpotThePotholeApp(strings: AppStrings = AppStrings.load()) {
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(AppRoute.Map.route) { MapScreen(strings) }
-            composable(AppRoute.Spot.route) { SpotScreen(strings) }
+            composable(AppRoute.Spot.route) {
+                SpotScreen(strings = strings, authSessionProvider = authSessionProvider)
+            }
             composable("pothole/{id}") { backStackEntry ->
                 PotholeDetailScreen(
                     strings = strings,
