@@ -140,7 +140,7 @@ $$;
 
 do $$
 declare
-  v_user uuid := '11111111-1111-1111-1111-111111111111';
+  v_user uuid := '00000000-0000-4000-8000-0000000000a1';
   v_pothole uuid := 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1';
   v_lat double precision;
   v_lng double precision;
@@ -229,7 +229,7 @@ $$;
 
 do $$
 declare
-  v_id uuid := 'cccccccc-cccc-cccc-cccc-ccccccccccc3';
+  v_id uuid := 'cccccccc-cccc-4ccc-8ccc-cccccccccc03';
 begin
   insert into auth.users (
     instance_id,
@@ -297,8 +297,8 @@ $$;
 do $$
 declare
   v_pothole uuid := 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1';
-  v_reporter uuid := 'dddddddd-dddd-dddd-dddd-dddddddddddd4';
-  v_confirmer uuid := 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee5';
+  v_reporter uuid := '00000000-0000-4000-8000-000000000004';
+  v_confirmer uuid := '00000000-0000-4000-8000-000000000005';
 begin
   insert into auth.users (
     instance_id,
