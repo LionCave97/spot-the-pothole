@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  changes:
+  path-filter:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -33,6 +33,7 @@ jobs:
       - uses: dorny/paths-filter@v3
         id: filter
         with:
+          token: ${{ github.token }}
           filters: |
             shared:
               - 'shared/**'
@@ -53,8 +54,8 @@ jobs:
               - '.github/workflows/ci.yml'
 
   shared:
-    needs: changes
-    if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.workflow_file == 'true'
+    needs: path-filter
+    if: needs.path-filter.outputs.shared == 'true' || needs.path-filter.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -71,8 +72,8 @@ jobs:
       - run: npm test
 
   web:
-    needs: changes
-    if: needs.changes.outputs.web == 'true' || needs.changes.outputs.workflow_file == 'true'
+    needs: path-filter
+    if: needs.path-filter.outputs.web == 'true' || needs.path-filter.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
@@ -93,8 +94,8 @@ jobs:
           NUXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
 
   supabase-security:
-    needs: changes
-    if: needs.changes.outputs.supabase == 'true' || needs.changes.outputs.workflow_file == 'true'
+    needs: path-filter
+    if: needs.path-filter.outputs.supabase == 'true' || needs.path-filter.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -110,8 +111,8 @@ jobs:
           bash supabase/tests/run_security_tests.sh
 
   android:
-    needs: changes
-    if: needs.changes.outputs.android == 'true' || needs.changes.outputs.workflow_file == 'true'
+    needs: path-filter
+    if: needs.path-filter.outputs.android == 'true' || needs.path-filter.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -134,10 +135,10 @@ jobs:
           SUPABASE_ANON_KEY: demo-anon-key
 
   ios:
-    needs: changes
+    needs: path-filter
     if: |
       (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') &&
-      (needs.changes.outputs.ios == 'true' || needs.changes.outputs.workflow_file == 'true')
+      (needs.path-filter.outputs.ios == 'true' || needs.path-filter.outputs.workflow_file == 'true')
     runs-on: macos-15
     timeout-minutes: 90
     defaults:
@@ -180,8 +181,8 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
 
   supabase-migrations:
-    needs: changes
-    if: needs.changes.outputs.supabase == 'true' || needs.changes.outputs.workflow_file == 'true'
+    needs: path-filter
+    if: needs.path-filter.outputs.supabase == 'true' || needs.path-filter.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     defaults:
@@ -207,8 +208,8 @@ jobs:
           fi
 
   worker:
-    needs: changes
-    if: needs.changes.outputs.worker == 'true' || needs.changes.outputs.workflow_file == 'true'
+    needs: path-filter
+    if: needs.path-filter.outputs.worker == 'true' || needs.path-filter.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -244,7 +245,7 @@ jobs:
     timeout-minutes: 5
     if: always()
     needs:
-      - changes
+      - path-filter
       - shared
       - web
       - supabase-security
@@ -255,7 +256,7 @@ jobs:
     steps:
       - name: Aggregate CI (skipped jobs count as success)
         env:
-          CHANGES: ${{ needs.changes.result }}
+          PATH_FILTER: ${{ needs.path-filter.result }}
           SHARED: ${{ needs.shared.result }}
           WEB: ${{ needs.web.result }}
           SUPABASE_SECURITY: ${{ needs.supabase-security.result }}
@@ -273,7 +274,7 @@ jobs:
                 ;;
             esac
           }
-          ok "$CHANGES" changes
+          ok "$PATH_FILTER" path-filter
           ok "$SHARED" shared
           ok "$WEB" web
           ok "$SUPABASE_SECURITY" supabase-security
