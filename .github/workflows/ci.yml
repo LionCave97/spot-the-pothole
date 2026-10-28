@@ -29,6 +29,20 @@ jobs:
           NUXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
           NUXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
 
+  supabase-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Start Supabase and run security SQL tests
+        run: |
+          supabase start -x imgproxy,edge-runtime,logflare,vector
+          supabase db reset
+          chmod +x supabase/tests/run_security_tests.sh
+          bash supabase/tests/run_security_tests.sh
+
   android:
     runs-on: ubuntu-latest
     defaults:
