@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Nuxt
+web/.nuxt/
+web/.output/
+web/dist/
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+web/.env
+android/local.properties
+ios/Config.xcconfig
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+*.apk
+*.aab
+
+# iOS / Xcode
+ios/*.xcodeproj/
+ios/*.xcworkspace/
+DerivedData/
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# OS / IDE
+.DS_Store
+.idea/
+*.swp
+
+# Logs
+*.log

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spotthepothole.example/schemas/confirm-pothole.request.json",
+  "title": "ConfirmPotholeRequest",
+  "type": "object",
+  "required": ["pothole_id", "lat", "lng"],
+  "properties": {
+    "pothole_id": { "type": "string", "format": "uuid" },
+    "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+    "lng": { "type": "number", "minimum": -180, "maximum": 180 }
+  },
+  "additionalProperties": false
+}

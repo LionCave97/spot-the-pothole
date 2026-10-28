@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spotthepothole.example/schemas/spot-report.request.json",
+  "title": "SpotReportRequest",
+  "type": "object",
+  "required": ["lat", "lng", "name", "photo_path"],
+  "properties": {
+    "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+    "lng": { "type": "number", "minimum": -180, "maximum": 180 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "photo_path": { "type": "string", "minLength": 1 },
+    "road_ref": { "type": "string", "maxLength": 64 }
+  },
+  "additionalProperties": false
+}

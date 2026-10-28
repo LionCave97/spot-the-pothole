@@ -1,0 +1,2 @@
+# Local Android SDK path (never commit real paths with secrets)
+sdk.dir=/path/to/Android/sdk

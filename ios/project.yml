@@ -1,0 +1,27 @@
+name: SpotThePothole
+options:
+  bundleIdPrefix: za.spotthepothole
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    PRODUCT_NAME: SpotThePothole
+
+targets:
+  SpotThePothole:
+    type: application
+    platform: iOS
+    sources:
+      - path: SpotThePothole
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Spot the Pothole
+        INFOPLIST_KEY_NSCameraUsageDescription: Live photo required to spot a pothole.
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: GPS is required to place potholes on the map.
+    scheme:
+      testTargets: []

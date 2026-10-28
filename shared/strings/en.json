@@ -1,0 +1,99 @@
+{
+  "app": {
+    "name": "Spot the Pothole",
+    "tagline": "Name it. Confirm it. Track the fix."
+  },
+  "nav": {
+    "map": "Map",
+    "feed": "Feed",
+    "spot": "Spot",
+    "leaderboard": "Leaderboard",
+    "profile": "Profile",
+    "wards": "Ward scorecards"
+  },
+  "map": {
+    "title": "Pothole map",
+    "empty": "No potholes in this area yet. Be the first to spot one!",
+    "filterOpen": "Open",
+    "filterFixed": "Fixed",
+    "filterAll": "All"
+  },
+  "feed": {
+    "title": "Recent spots",
+    "empty": "Nothing new nearby. Hit Spot when you see a crater."
+  },
+  "spot": {
+    "title": "Spot a pothole",
+    "cameraHint": "Take a live photo at the pothole (GPS required).",
+    "nameLabel": "Give it a name",
+    "namePlaceholder": "e.g. Jan Smuts Sinkhole",
+    "submit": "Submit report",
+    "gpsRequired": "Turn on location to spot potholes."
+  },
+  "pothole": {
+    "statusOpen": "Open",
+    "statusFixed": "Fixed",
+    "statusComeback": "Comeback",
+    "confirm": "Confirm this pothole",
+    "confirmHint": "Stand within 15 m and confirm it is still here.",
+    "fixedReport": "Report as fixed",
+    "timeline": "Timeline",
+    "comments": "Comments",
+    "ward": "Ward",
+    "authority": "Responsible authority",
+    "roadRef": "Road reference",
+    "pointsPending": "Points pending confirmation",
+    "pointsAwarded": "Points awarded"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "weekly": "This week",
+    "allTime": "All time",
+    "empty": "No scores yet. Spot and confirm potholes to climb the board."
+  },
+  "wards": {
+    "title": "Ward scorecards",
+    "responseScore": "Response score",
+    "openCount": "Open potholes",
+    "medianFixDays": "Median days to fix",
+    "councillor": "Councillor",
+    "party": "Party",
+    "asOf": "Data as of"
+  },
+  "profile": {
+    "title": "Profile",
+    "anonymous": "Anonymous spotter",
+    "badges": "Badges",
+    "points": "Points",
+    "reports": "Reports",
+    "confirmations": "Confirmations",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "magicLink": "Send magic link",
+    "orContinue": "Or continue with"
+  },
+  "moderation": {
+    "flag": "Flag content",
+    "reasonSpam": "Spam",
+    "reasonUnsafe": "Unsafe or abusive",
+    "reasonWrongLocation": "Wrong location",
+    "submitted": "Thanks — moderators will review this."
+  },
+  "errors": {
+    "generic": "Something went wrong. Try again.",
+    "notFound": "Not found.",
+    "unauthorized": "Sign in to continue.",
+    "duplicateNearby": "A pothole was already reported nearby — merged with existing record."
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "share": "Share"
+  }
+}
