@@ -47,6 +47,7 @@ jobs:
 
   ios:
     runs-on: macos-latest
+    timeout-minutes: 90
     defaults:
       run:
         working-directory: ios
