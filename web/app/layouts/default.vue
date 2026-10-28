@@ -9,6 +9,7 @@ const strings = useStrings()
       <nav class="nav">
         <NuxtLink to="/map">{{ strings.nav.map }}</NuxtLink>
         <NuxtLink to="/feed">{{ strings.nav.feed }}</NuxtLink>
+        <NuxtLink to="/spot">{{ strings.nav.spot }}</NuxtLink>
         <NuxtLink to="/leaderboard">{{ strings.nav.leaderboard }}</NuxtLink>
         <NuxtLink to="/wards">{{ strings.nav.wards }}</NuxtLink>
         <NuxtLink to="/profile">{{ strings.nav.profile }}</NuxtLink>

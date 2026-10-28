@@ -5,6 +5,11 @@
   "type": "module",
   "exports": {
     "./strings/en.json": "./strings/en.json",
-    "./types": "./types/index.ts"
+    "./types": "./types/index.ts",
+    "./capture/constants": "./capture/constants.ts",
+    "./capture/gating": "./capture/gating.ts"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test capture/*.test.ts"
   }
 }

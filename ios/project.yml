@@ -24,4 +24,13 @@ targets:
         INFOPLIST_KEY_NSCameraUsageDescription: Live photo required to spot a pothole.
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: GPS is required to place potholes on the map.
     scheme:
-      testTargets: []
+      testTargets:
+        - SpotThePotholeTests
+
+  SpotThePotholeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: SpotThePotholeTests
+    dependencies:
+      - target: SpotThePothole

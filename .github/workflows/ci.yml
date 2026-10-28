@@ -6,6 +6,18 @@ on:
   pull_request:
 
 jobs:
+  shared:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: shared
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm test
+
   web:
     runs-on: ubuntu-latest
     defaults:
@@ -38,4 +50,4 @@ jobs:
           java-version: "17"
       - uses: android-actions/setup-android@v3
       - run: chmod +x gradlew
-      - run: ./gradlew assembleDebug --no-daemon
+      - run: ./gradlew assembleDebug test --no-daemon
