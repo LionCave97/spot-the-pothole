@@ -1,45 +1,5 @@
 -- DEV-209: Harden RLS, RPC execute privileges, and public read masking.
--- Storage bucket spot-photos is handled in a separate migration (PR #2).
-
--- ---------------------------------------------------------------------------
--- Helpers
--- ---------------------------------------------------------------------------
-
-create or replace function public.coarsen_geography_point(p geography)
-returns geography
-language sql
-immutable
-parallel safe
-set search_path = public, extensions
-as $$
-  select st_setsrid(
-    st_makepoint(
-      round(st_x(p::geometry)::numeric, 3)::double precision,
-      round(st_y(p::geometry)::numeric, 3)::double precision
-    ),
-    4326
-  )::geography;
-$$;
-
-create or replace function public.coarsen_geography_point_lat(p geography)
-returns double precision
-language sql
-immutable
-parallel safe
-set search_path = public, extensions
-as $$
-  select round(st_y(p::geometry)::numeric, 3)::double precision;
-$$;
-
-create or replace function public.coarsen_geography_point_lng(p geography)
-returns double precision
-language sql
-immutable
-parallel safe
-set search_path = public, extensions
-as $$
-  select round(st_x(p::geometry)::numeric, 3)::double precision;
-$$;
+-- Storage buckets (spot-photos / quarantine) are in PR #2 migrations 000003–000004.
 
 -- ---------------------------------------------------------------------------
 -- Signup: non-PII default username
@@ -220,7 +180,9 @@ create policy "Users update own profile safe fields"
   );
 
 -- ---------------------------------------------------------------------------
--- Masked public views (security invoker off so reads work after table REVOKE)
+-- Public views: exact pothole/spot geometry; mask people (no route history).
+-- Pothole/report/confirmation coordinates stay exact for map + 15 m merge.
+-- Spot/confirmation views omit user keys and timestamps (no per-user timelines).
 -- ---------------------------------------------------------------------------
 
 create or replace view public.profiles_public
@@ -230,8 +192,7 @@ select
   case when p.is_anonymous then null::uuid else p.id end as id,
   case when p.is_anonymous then 'Anonymous'::text else p.username end as username,
   p.is_anonymous,
-  p.points,
-  p.created_at
+  p.points
 from public.profiles p;
 
 create or replace view public.reports_public
@@ -240,14 +201,10 @@ as
 select
   r.id,
   r.pothole_id,
-  case when pr.is_anonymous then null::uuid else r.reporter_id end as reporter_id,
-  case when pr.is_anonymous then 'Anonymous'::text else pr.username end as reporter_username,
   r.photo_path,
-  public.coarsen_geography_point_lat(r.location) as lat,
-  public.coarsen_geography_point_lng(r.location) as lng,
-  r.created_at
-from public.reports r
-left join public.profiles pr on pr.id = r.reporter_id;
+  st_y(r.location::geometry) as lat,
+  st_x(r.location::geometry) as lng
+from public.reports r;
 
 create or replace view public.confirmations_public
 with (security_invoker = false)
@@ -255,13 +212,9 @@ as
 select
   c.id,
   c.pothole_id,
-  case when pr.is_anonymous then null::uuid else c.confirmer_id end as confirmer_id,
-  case when pr.is_anonymous then 'Anonymous'::text else pr.username end as confirmer_username,
-  public.coarsen_geography_point_lat(c.location) as lat,
-  public.coarsen_geography_point_lng(c.location) as lng,
-  c.created_at
-from public.confirmations c
-left join public.profiles pr on pr.id = c.confirmer_id;
+  st_y(c.location::geometry) as lat,
+  st_x(c.location::geometry) as lng
+from public.confirmations c;
 
 create or replace view public.comments_public
 with (security_invoker = false)
@@ -269,8 +222,14 @@ as
 select
   c.id,
   c.pothole_id,
-  case when pr.is_anonymous then null::uuid else c.author_id end as author_id,
-  case when pr.is_anonymous then 'Anonymous'::text else pr.username end as author_username,
+  case
+    when pr.is_anonymous then null::uuid
+    else c.author_id
+  end as author_id,
+  case
+    when pr.is_anonymous then 'Anonymous'::text
+    else pr.username
+  end as author_username,
   c.body,
   c.created_at
 from public.comments c
@@ -295,8 +254,8 @@ select
   t.pothole_id,
   t.event_type,
   case
-    when pr.is_anonymous then t.payload - 'reporter_id' - 'actor_id'
-    else t.payload
+    when pr.is_anonymous then t.payload - 'reporter_id' - 'actor_id' - 'confirmation_id'
+    else t.payload - 'reporter_id'
   end as payload,
   case when pr.is_anonymous then null::uuid else t.actor_id end as actor_id,
   case when pr.is_anonymous then 'Anonymous'::text else pr.username end as actor_username,
@@ -310,8 +269,7 @@ as
 select
   case when pr.is_anonymous then null::uuid else ub.user_id end as user_id,
   case when pr.is_anonymous then 'Anonymous'::text else pr.username end as username,
-  ub.badge_id,
-  ub.awarded_at
+  ub.badge_id
 from public.user_badges ub
 left join public.profiles pr on pr.id = ub.user_id;
 

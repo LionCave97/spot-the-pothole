@@ -91,6 +91,139 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------------
+-- Public spot/confirmation views: no per-user route history (requirement 1)
+-- ---------------------------------------------------------------------------
+
+do $$
+declare
+  v_bad_cols text[];
+begin
+  select array_agg(column_name order by column_name)
+  into v_bad_cols
+  from information_schema.columns
+  where table_schema = 'public'
+    and table_name = 'reports_public'
+    and column_name = any (array[
+      'reporter_id',
+      'reporter_username',
+      'confirmer_id',
+      'created_at',
+      'reported_at'
+    ]);
+
+  if v_bad_cols is not null then
+    raise exception 'reports_public exposes route/history columns: %', v_bad_cols;
+  end if;
+
+  select array_agg(column_name order by column_name)
+  into v_bad_cols
+  from information_schema.columns
+  where table_schema = 'public'
+    and table_name = 'confirmations_public'
+    and column_name = any (array[
+      'confirmer_id',
+      'confirmer_username',
+      'reporter_id',
+      'created_at',
+      'confirmed_at'
+    ]);
+
+  if v_bad_cols is not null then
+    raise exception 'confirmations_public exposes route/history columns: %', v_bad_cols;
+  end if;
+end;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- Anonymous spots never linked to a profile in public views (requirement 2)
+-- ---------------------------------------------------------------------------
+
+do $$
+declare
+  v_user uuid := '11111111-1111-1111-1111-111111111111';
+  v_pothole uuid := 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1';
+  v_lat double precision;
+  v_lng double precision;
+  v_view_lat double precision;
+  v_view_lng double precision;
+begin
+  insert into auth.users (
+    instance_id,
+    id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    raw_user_meta_data,
+    created_at,
+    updated_at
+  )
+  values (
+    '00000000-0000-0000-0000-000000000000',
+    v_user,
+    'authenticated',
+    'authenticated',
+    'anon-spot-test@example.invalid',
+    extensions.crypt('test-password', extensions.gen_salt('bf')),
+    now(),
+    '{"username":"hidden_spotter","is_anonymous":true}'::jsonb,
+    now(),
+    now()
+  )
+  on conflict (id) do nothing;
+
+  update public.profiles
+    set username = 'hidden_spotter',
+        is_anonymous = true
+  where id = v_user;
+
+  insert into public.reports (pothole_id, reporter_id, photo_path, location)
+  values (
+    v_pothole,
+    v_user,
+    'demo/anonymous-spot.jpg',
+    st_setsrid(st_makepoint(28.0471, -26.2002), 4326)::geography
+  )
+  returning
+    st_y(location::geometry),
+    st_x(location::geometry)
+  into v_lat, v_lng;
+
+  perform set_config('role', 'anon', true);
+
+  select rp.lat, rp.lng
+  into v_view_lat, v_view_lng
+  from public.reports_public rp
+  where rp.photo_path = 'demo/anonymous-spot.jpg'
+  limit 1;
+
+  if v_view_lat is null then
+    raise exception 'expected anonymous spot in reports_public';
+  end if;
+
+  if v_view_lat <> v_lat or v_view_lng <> v_lng then
+    raise exception 'reports_public must keep exact spot coordinates';
+  end if;
+
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'reports_public'
+      and column_name ~* '(reporter|confirmer|user|author|profile|username|_id$)'
+      and column_name not in ('id', 'pothole_id')
+  ) then
+    raise exception 'reports_public must not expose profile linkage columns';
+  end if;
+
+  perform set_config('role', 'postgres', true);
+  delete from public.reports where reporter_id = v_user and pothole_id = v_pothole;
+  delete from auth.users where id = v_user;
+end;
+$$;
+
+-- ---------------------------------------------------------------------------
 -- Masking: anonymous profile hides id/username in profiles_public
 -- ---------------------------------------------------------------------------
 
