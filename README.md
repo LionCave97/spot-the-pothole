@@ -129,7 +129,7 @@ Copy from root `.env.example` and per-package `.env.example` files — **placeho
 | Ward scorecard UI | Schema + seed wards; UI placeholder |
 | i18n beyond English | Strings file ready; no locale switching |
 | Accessibility | Minimal; WCAG planned Phase 2 |
-| Supabase client in mobile apps | BuildConfig / manual config placeholders |
+| Supabase client in mobile apps | BuildConfig / Info.plist placeholders + Supabase SDK wired (no real keys in git) |
 
 ## Scripts
 

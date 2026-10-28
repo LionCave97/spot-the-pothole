@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./strings/en.json": "./strings/en.json",
-    "./types": "./types/index.ts"
+    "./types": "./types/index.ts",
+    "./constants": "./constants.ts"
   }
 }
