@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   web:
@@ -92,6 +92,8 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+      - name: Stop leftover local stack (runner reuse)
+        run: supabase stop --no-backup || true
       - name: Start local database
         run: supabase db start
       - name: Apply migrations and seed
