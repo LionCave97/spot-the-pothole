@@ -1,3 +1,4 @@
+# Path-filtered CI: require ci-ok for branch protection when jobs are skipped.
 name: CI
 
 on:
