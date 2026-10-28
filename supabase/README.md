@@ -22,4 +22,4 @@ supabase status
 
 ## Storage
 
-Configure a `pothole-photos` bucket in a follow-up migration when wiring uploads (not included in Phase 1 scaffold).
+Configure the `spot-photos` bucket via migration `20260101000003_spot_photos_storage.sql` (user-scoped write paths, public read).
