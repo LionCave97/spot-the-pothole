@@ -41,7 +41,9 @@ class PhotoPrivacyBlurrer {
         text.textBlocks.forEach { block ->
             val token = block.text.replace("\n", " ").trim().uppercase()
             if (platePattern.matches(token)) {
-                regions.add(expand(block.boundingBox, original.width, original.height, 0.08f))
+                block.boundingBox?.let { box ->
+                    regions.add(expand(box, original.width, original.height, 0.08f))
+                }
             }
         }
 

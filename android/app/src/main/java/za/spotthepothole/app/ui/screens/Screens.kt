@@ -39,19 +39,18 @@ import za.spotthepothole.app.spot.SpotCaptureGate
 import za.spotthepothole.app.spot.SpotLocationSample
 import za.spotthepothole.app.spot.SpotLocationTracker
 import za.spotthepothole.app.ui.strings.AppStrings
-import java.util.concurrent.Executors
-
-@Composable
-fun MapScreen(strings: AppStrings) {
-    ScreenScaffold(strings.mapTitle, strings.stubMessage)
-}
-
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.rememberCoroutineScope
 import za.spotthepothole.app.auth.AuthSessionProvider
 import za.spotthepothole.app.spot.SpotUploadProgress
 import za.spotthepothole.app.spot.SpotUploadRepository
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
+
+@Composable
+fun MapScreen(strings: AppStrings) {
+    ScreenScaffold(strings.mapTitle, strings.stubMessage)
+}
 
 @Composable
 fun SpotScreen(
