@@ -1,5 +1,6 @@
 # Nuxt dev/build outputs
 .output
+.vercel
 .data
 .nuxt
 .nitro
@@ -22,3 +23,6 @@ logs
 .env
 .env.*
 !.env.example
+
+server/assets/blur-models/*.onnx
+server/assets/blur-models/.tmp/

@@ -89,6 +89,13 @@ jobs:
       - run: npm ci
       - run: npm run test
       - run: npm run lint
+      - run: pip install opencv-python-headless onnx
+      - run: npm run blur:models
+      - run: npm test
+      - run: npm run blur:test-nms
+      - name: Download blur eval fixtures
+        run: bash ../fixtures/blur-worker-eval/download-fixtures.sh
+      - run: npm run blur:compare
       - run: npm run build
         env:
           NUXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
