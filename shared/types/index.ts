@@ -153,7 +153,6 @@ export interface ResponsibilityLookupResponse {
 }
 
 export interface ScoreLeaderboardEntry {
-  user_id: string
   username: string | null
   is_anonymous: boolean
   points: number

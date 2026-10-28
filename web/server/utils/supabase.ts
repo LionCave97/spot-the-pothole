@@ -4,12 +4,13 @@ import { createClient } from '@supabase/supabase-js'
 export function useServerSupabase(event?: H3Event) {
   const config = useRuntimeConfig(event)
   const url = config.public.supabaseUrl
-  const key = config.supabaseServiceRoleKey || config.public.supabaseAnonKey
+  const key = config.supabaseServiceRoleKey
 
   if (!url || !key) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Supabase is not configured. Copy web/.env.example to web/.env.',
+      statusMessage:
+        'Supabase service role is not configured. Set SUPABASE_SERVICE_ROLE_KEY in web/.env (never use the anon key on the server).',
     })
   }
 
