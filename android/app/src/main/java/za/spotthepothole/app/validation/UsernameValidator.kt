@@ -5,10 +5,11 @@ object UsernameValidator {
     private val blocked = setOf("admin", "moderator", "support", "anonymous", "spotthepothole")
 
     fun validate(username: String): String? {
-        val normalized = username.trim().lowercase()
+        val trimmed = username.trim()
+        if (trimmed.contains(' ') || trimmed.contains('@')) return "looksLikeFullName"
+        val normalized = trimmed.lowercase()
         if (!pattern.matches(normalized)) return "invalidFormat"
         if (blocked.contains(normalized)) return "blocked"
-        if (username.contains(' ') || username.contains('@')) return "looksLikeFullName"
         return null
     }
 
