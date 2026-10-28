@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: read
+
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -21,7 +25,7 @@ jobs:
       ios: ${{ steps.filter.outputs.ios }}
       supabase: ${{ steps.filter.outputs.supabase }}
       worker: ${{ steps.filter.outputs.worker }}
-      workflow: ${{ steps.filter.outputs.workflow }}
+      workflow_file: ${{ steps.filter.outputs.workflow_file }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,12 +49,12 @@ jobs:
               - 'supabase/**'
             worker:
               - 'worker/**'
-            workflow:
+            workflow_file:
               - '.github/workflows/ci.yml'
 
   shared:
     needs: changes
-    if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.workflow == 'true'
+    if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -68,7 +72,7 @@ jobs:
 
   web:
     needs: changes
-    if: needs.changes.outputs.web == 'true' || needs.changes.outputs.workflow == 'true'
+    if: needs.changes.outputs.web == 'true' || needs.changes.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
@@ -90,7 +94,7 @@ jobs:
 
   supabase-security:
     needs: changes
-    if: needs.changes.outputs.supabase == 'true' || needs.changes.outputs.workflow == 'true'
+    if: needs.changes.outputs.supabase == 'true' || needs.changes.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -107,7 +111,7 @@ jobs:
 
   android:
     needs: changes
-    if: needs.changes.outputs.android == 'true' || needs.changes.outputs.workflow == 'true'
+    if: needs.changes.outputs.android == 'true' || needs.changes.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -133,7 +137,7 @@ jobs:
     needs: changes
     if: |
       (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') &&
-      (needs.changes.outputs.ios == 'true' || needs.changes.outputs.workflow == 'true')
+      (needs.changes.outputs.ios == 'true' || needs.changes.outputs.workflow_file == 'true')
     runs-on: macos-15
     timeout-minutes: 90
     defaults:
@@ -177,7 +181,7 @@ jobs:
 
   supabase-migrations:
     needs: changes
-    if: needs.changes.outputs.supabase == 'true' || needs.changes.outputs.workflow == 'true'
+    if: needs.changes.outputs.supabase == 'true' || needs.changes.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     defaults:
@@ -204,7 +208,7 @@ jobs:
 
   worker:
     needs: changes
-    if: needs.changes.outputs.worker == 'true' || needs.changes.outputs.workflow == 'true'
+    if: needs.changes.outputs.worker == 'true' || needs.changes.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
