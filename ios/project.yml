@@ -33,10 +33,6 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Spot the Pothole
         INFOPLIST_KEY_NSCameraUsageDescription: Live photo required to spot a pothole.
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: GPS is required to place potholes on the map.
-    info:
-      properties:
-        SUPABASE_URL: $(SUPABASE_URL)
-        SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
     scheme:
       testTargets:
         - SpotThePotholeTests
@@ -45,6 +41,6 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: SpotThePotholeTests
+      - SpotThePotholeTests
     dependencies:
       - target: SpotThePothole
