@@ -22,6 +22,12 @@ create policy "Users insert own POPIA consent"
   to authenticated
   with check (auth.uid() = user_id);
 
+create policy "Users update own POPIA consent"
+  on public.popia_consents for update
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
 -- ---------------------------------------------------------------------------
 -- Username validation (no full names; English slurs subset)
 -- ---------------------------------------------------------------------------

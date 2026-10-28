@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import za.spotthepothole.app.AppSupabase
 
 @Serializable
 data class UserProfile(
@@ -18,8 +19,15 @@ data class UserProfile(
     @SerialName("onboarding_completed_at") val onboardingCompletedAt: String? = null,
 )
 
+@Serializable
+private data class CompleteOnboardingParams(
+    val p_username: String,
+    val p_is_anonymous: Boolean,
+    val p_notice_version: String,
+)
+
 class AuthRepository {
-    private val supabase = za.spotthepothole.app.AppSupabase.client
+    private val supabase = AppSupabase.client
 
     private val _profile = MutableStateFlow<UserProfile?>(null)
     val profile = _profile.asStateFlow()
@@ -58,11 +66,14 @@ class AuthRepository {
     }
 
     suspend fun completeOnboarding(username: String, isAnonymous: Boolean) {
-        supabase.postgrest.rpc("complete_onboarding") {
-            parameter("p_username", username)
-            parameter("p_is_anonymous", isAnonymous)
-            parameter("p_notice_version", POPIA_NOTICE_VERSION)
-        }
+        supabase.postgrest.rpc(
+            "complete_onboarding",
+            CompleteOnboardingParams(
+                p_username = username,
+                p_is_anonymous = isAnonymous,
+                p_notice_version = POPIA_NOTICE_VERSION,
+            ),
+        )
         refreshSession()
     }
 

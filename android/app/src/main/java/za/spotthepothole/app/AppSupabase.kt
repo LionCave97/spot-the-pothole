@@ -1,6 +1,7 @@
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import za.spotthepothole.app.BuildConfig
 
 /** Supabase client configured from [BuildConfig] placeholders (no secrets in git). */
 object AppSupabase {

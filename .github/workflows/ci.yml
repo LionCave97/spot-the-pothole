@@ -206,10 +206,10 @@ jobs:
         run: supabase db reset
       - name: Run SQL tests (if any)
         run: |
-          if [ -d security_tests ] && find security_tests -name '*.sql' -print -quit | grep -q .; then
+          if [ -d tests ] && find tests -name '*.sql' -print -quit | grep -q .; then
             supabase test db
           else
-            echo "No supabase/security_tests SQL files; skipping supabase test db."
+            echo "No supabase/tests SQL files; skipping supabase test db."
           fi
 
   worker:
