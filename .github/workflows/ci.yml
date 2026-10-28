@@ -97,16 +97,20 @@ jobs:
     needs: path-filter
     if: needs.path-filter.outputs.supabase == 'true' || needs.path-filter.outputs.workflow_file == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: 2.122.0
-      - name: Start Supabase and run security SQL tests
+      - name: Stop leftover local stack (runner reuse)
+        run: supabase stop --no-backup || true
+      - name: Start Supabase and apply migrations
         run: |
           supabase start -x imgproxy,edge-runtime,logflare,vector
           supabase db reset
+      - name: Run security SQL tests
+        run: |
           chmod +x supabase/tests/run_security_tests.sh
           bash supabase/tests/run_security_tests.sh
 
