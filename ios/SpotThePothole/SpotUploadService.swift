@@ -81,7 +81,7 @@ enum SpotUploadService {
         bytes: Data
     ) async throws {
         let base = supabaseUrl.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        let url = URL(string: "\(base)/storage/v1/object/\(SpotPhotoConstants.storageBucket)/\(storagePath)")!
+        let url = URL(string: "\(base)/storage/v1/object/\(SpotPhotoConstants.quarantineBucket)/\(storagePath)")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = bytes
@@ -107,7 +107,6 @@ enum SpotUploadService {
         request.httpMethod = "POST"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(SpotPhotoConstants.blurVerifiedValue, forHTTPHeaderField: SpotPhotoConstants.blurVerifiedHeader)
 
         let payload: [String: Any] = [
             "lat": capture.location.lat,

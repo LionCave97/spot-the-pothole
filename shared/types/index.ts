@@ -125,6 +125,8 @@ export interface SpotReportResponse {
   ward_id: string | null
   authority: string | null
   points_awarded: number
+  photo_moderation_status: 'pending' | 'published' | 'rejected'
+  published_photo_path: string | null
 }
 
 export interface ConfirmPotholeRequest {

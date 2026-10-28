@@ -23,6 +23,7 @@ enum L10n {
     static let uploadBlurFailed = "We could not blur faces or plates on this photo. Take another shot."
     static let uploadFailed = "Upload failed. Check your connection and try again."
     static let uploadSuccess = "Spot submitted — thanks for helping fix the roads!"
+    static let uploadPendingModeration = "Photo received and pending moderation before it appears publicly."
     static let uploadNameRequired = "Give the pothole a name before submitting."
     static let uploadSignInRequired = "Sign in to upload your spot."
     static let leaderboard = "Leaderboard"

@@ -105,7 +105,7 @@ struct SpotScreen: View {
                         case .blurring: L10n.uploadBlurring
                         case .uploading: L10n.uploadProgress
                         case .submitting: L10n.uploadSubmitting
-                        case .done: L10n.uploadSuccess
+                        case .done: L10n.uploadPendingModeration
                         }
                     }
                 }

@@ -23,6 +23,7 @@ class PhotoPrivacyBlurrer {
     )
     private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
+    // Mirrors shared/plates/heuristic.ts PLATE_TOKEN_REGEX
     private val platePattern = Regex("""^[A-Z0-9]{2,3}\s?[0-9]{2,3}\s?[A-Z0-9]{2,4}$""")
 
     suspend fun blurFacesAndPlates(jpegBytes: ByteArray): Result<ByteArray> = runCatching {

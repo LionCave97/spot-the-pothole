@@ -47,6 +47,7 @@
     "failed": "Upload failed. Check your connection and try again.",
     "blurFailed": "We could not blur faces or plates on this photo. Take another shot.",
     "success": "Spot submitted — thanks for helping fix the roads!",
+    "pendingModeration": "Photo received and pending moderation before it appears publicly.",
     "nameRequired": "Give the pothole a name before submitting.",
     "signInRequired": "Sign in to upload your spot."
   },

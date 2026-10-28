@@ -5,9 +5,8 @@ object SpotPhotoConstants {
     const val MAX_BYTES = 1_500_000
     const val MAX_LONG_EDGE_PX = 1920
     const val JPEG_QUALITY = 82
-    const val BLUR_VERIFIED_HEADER = "x-spot-blur-verified"
-    const val BLUR_VERIFIED_VALUE = "on-device"
-    const val STORAGE_BUCKET = "spot-photos"
+    const val QUARANTINE_BUCKET = "spot-photos-quarantine"
+    const val PUBLISHED_BUCKET = "spot-photos"
 }
 
 object SpotPhotoPath {
