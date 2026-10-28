@@ -38,7 +38,7 @@ jobs:
           version: latest
       - name: Start Supabase and run security SQL tests
         run: |
-          supabase start -x imgproxy,edge-runtime,logflare
+          supabase start -x imgproxy,edge-runtime,logflare,vector
           supabase db reset
           chmod +x supabase/tests/run_security_tests.sh
           bash supabase/tests/run_security_tests.sh

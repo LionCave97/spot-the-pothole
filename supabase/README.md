@@ -15,9 +15,9 @@ supabase status
 1. `20260101000000_extensions_and_core.sql` — PostGIS, tables, profile trigger
 2. `20260101000001_game_functions.sql` — ward lookup, merge within ~15 m, confirmations / points
 3. `20260101000002_rls.sql` — RLS policies
-4. `20260101000004_harden_rls_and_rpc_security.sql` — RPC hardening, masked `*_public` views, profile/pothole write restrictions
+4. `20260101000005_harden_rls_and_rpc_security.sql` — RPC hardening, masked `*_public` views, profile/pothole write restrictions
 
-(`20260101000003_spot_photos_storage.sql` is in a separate PR for the storage bucket.)
+(`20260101000003_spot_photos_storage.sql` and `20260101000004_photo_moderation.sql` are in PR #2.)
 
 ## Security tests
 
@@ -25,6 +25,8 @@ supabase status
 supabase db reset
 bash supabase/tests/run_security_tests.sh
 ```
+
+## Seed
 
 `seed.sql` inserts demo wards, potholes, badges, and timeline events — all fictional.
 
