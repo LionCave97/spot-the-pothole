@@ -7,6 +7,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
@@ -14,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import za.spotthepothole.app.auth.AuthSessionProvider
+import za.spotthepothole.app.data.AuthRepository
 import za.spotthepothole.app.ui.screens.LeaderboardScreen
 import za.spotthepothole.app.ui.screens.MapScreen
 import za.spotthepothole.app.ui.screens.PotholeDetailScreen
@@ -29,13 +33,13 @@ enum class AppRoute(val route: String, val labelKey: (AppStrings) -> String) {
 }
 
 @Composable
-fun SpotThePotholeApp(
-    strings: AppStrings = AppStrings.load(),
-    authSessionProvider: AuthSessionProvider = AuthSessionProvider { null },
-) {
+fun SpotThePotholeApp(strings: AppStrings = AppStrings.load()) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val auth = remember { AuthRepository() }
+    val authSessionProvider = remember(auth) { AuthSessionProvider { auth.accessToken() } }
+    var browseWithoutAccount by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -64,7 +68,12 @@ fun SpotThePotholeApp(
         ) {
             composable(AppRoute.Map.route) { MapScreen(strings) }
             composable(AppRoute.Spot.route) {
-                SpotScreen(strings = strings, authSessionProvider = authSessionProvider)
+                SpotScreen(
+                    strings = strings,
+                    auth = auth,
+                    browseWithoutAccount = browseWithoutAccount,
+                    authSessionProvider = authSessionProvider,
+                )
             }
             composable("pothole/{id}") { backStackEntry ->
                 PotholeDetailScreen(
@@ -73,7 +82,14 @@ fun SpotThePotholeApp(
                 )
             }
             composable(AppRoute.Leaderboard.route) { LeaderboardScreen(strings) }
-            composable(AppRoute.Profile.route) { ProfileScreen(strings) }
+            composable(AppRoute.Profile.route) {
+                ProfileScreen(
+                    strings = strings,
+                    auth = auth,
+                    browseWithoutAccount = browseWithoutAccount,
+                    onBrowseWithoutAccount = { browseWithoutAccount = true },
+                )
+            }
         }
     }
 }

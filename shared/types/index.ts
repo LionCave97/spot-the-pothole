@@ -14,7 +14,16 @@ export interface Profile {
   is_anonymous: boolean
   points: number
   created_at: string
+  onboarding_completed_at?: string | null
 }
+
+export interface PopiaConsent {
+  user_id: string
+  notice_version: string
+  consented_at: string
+}
+
+export const POPIA_NOTICE_VERSION = '2026-01-popia-v1' as const
 
 export interface Ward {
   id: string

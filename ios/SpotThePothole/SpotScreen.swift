@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SpotScreen: View {
+    @ObservedObject var auth: AuthStore
     @StateObject private var locationService = SpotLocationService()
     @StateObject private var cameraCoordinator = CameraCaptureCoordinator()
     @State private var gateMessage = L10n.spotWaitingForGps
@@ -11,9 +12,18 @@ struct SpotScreen: View {
     @State private var statusMessage: String?
     @State private var isBusy = false
 
-    private let authProvider: AuthSessionProviding = DemoAuthSessionProvider()
-
     var body: some View {
+        if auth.profile?.onboarding_completed_at == nil {
+            ScreenScaffold(
+                title: L10n.spotTitle,
+                message: auth.isSignedIn ? L10n.finishSetup : L10n.spotRequiresAuth
+            )
+        } else {
+            spotCaptureContent
+        }
+    }
+
+    private var spotCaptureContent: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 12) {
                 Text(L10n.spotTitle).font(.largeTitle.bold())
@@ -96,7 +106,7 @@ struct SpotScreen: View {
                 try await SpotUploadService.submitSpot(
                     capture: photo,
                     name: trimmed,
-                    auth: authProvider,
+                    auth: auth,
                     supabaseUrl: ProcessInfo.processInfo.environment["SUPABASE_URL"] ?? "http://127.0.0.1:54321",
                     webApiBase: ProcessInfo.processInfo.environment["WEB_API_BASE"] ?? "http://127.0.0.1:3000"
                 ) { progress in
