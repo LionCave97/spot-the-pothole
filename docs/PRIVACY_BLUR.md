@@ -13,12 +13,9 @@ The unblurred capture buffer is discarded after processing. Clients upload the o
 
 1. Mobile uploads to `spot-photos-quarantine/{userId}/…` (authenticated insert on own folder; **no public read**).
 2. `POST /api/game/spot` references the quarantine path. The Nuxt route uses the **Supabase service role** to verify the object exists.
-3. Phase 1: a full server-side vision blur pass is not run in-process (too heavy). The report is stored with `photo_moderation_status = pending`. The pothole is created **without** a public `photo_path` until moderation completes.
-4. A future moderation job (service role only) will:
-   - Download the quarantine object
-   - Run server-side face/plate blur (or reject)
-   - Copy the result into `spot-photos/{userId}/…`
-   - Set `published_photo_path`, update pothole `photo_path`, and mark the report `published`
+3. Phase 1 (Nuxt): verify quarantine object exists; store report with `photo_moderation_status = pending` and no public pothole photo until publish.
+4. **`worker/` blur container (DEV-211):** Supabase Database Webhooks on quarantine `storage.objects` and/or `reports` insert call the worker. It downloads the quarantine JPEG, runs YuNet + LPD-YuNet (regions only), blurs, publishes EXIF-free JPEG to `spot-photos`, updates moderation fields and pothole `photo_path`, and deletes the quarantine original. Low confidence or errors keep the report **`pending`** for DEV-212.
+5. Wiring and local Docker: `worker/README.md`. Metrics: `docs/blur-worker-eval.md`.
 
 **Do not** send or check `x-spot-blur-verified` — tampered clients cannot skip server review.
 
