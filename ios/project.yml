@@ -9,7 +9,6 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.10"
-    PRODUCT_NAME: SpotThePothole
     SUPABASE_URL: http://127.0.0.1:54321
     SUPABASE_ANON_KEY: demo-anon-key
 
@@ -29,6 +28,7 @@ targets:
         product: Supabase
     settings:
       base:
+        PRODUCT_NAME: SpotThePothole
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Spot the Pothole
         INFOPLIST_KEY_NSCameraUsageDescription: Live photo required to spot a pothole.
@@ -42,5 +42,8 @@ targets:
     platform: iOS
     sources:
       - SpotThePotholeTests
+    settings:
+      base:
+        PRODUCT_NAME: SpotThePotholeTests
     dependencies:
       - target: SpotThePothole
