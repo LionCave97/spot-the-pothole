@@ -43,13 +43,14 @@ def main() -> None:
             continue
         url = img["downloadUrl"]
         print(f"Fetching {img['id']}...")
-        for attempt in range(5):
+        for attempt in range(8):
             try:
                 dest.write_bytes(fetch_bytes(url))
+                time.sleep(1.25)
                 break
             except urllib.error.HTTPError as err:
-                if err.code == 429 and attempt < 4:
-                    time.sleep(2 ** attempt)
+                if err.code in (429, 503) and attempt < 7:
+                    time.sleep(min(90, 2 ** (attempt + 2)))
                     continue
                 raise
     print(f"Images in {OUT}")
