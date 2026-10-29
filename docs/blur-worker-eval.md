@@ -57,8 +57,8 @@ Parity baseline: `fixtures/blur-worker-eval/detection-counts-baseline.json` (fac
 | car-show-jhb | mixed | 1/3 | 1/2 | 1544 |
 | negative-jhb-skyline | negative | 0/0 | 0/0 | 412 |
 
-Full JSON per-image rows: run `python3 worker/scripts/run_eval.py`.
+Full per-image rows: `cd web && npm run blur:compare` (writes gitignored `docs/blur-detection-compare.json`).
 
 ## Unit tests
 
-Webhook auth/routing and blur masking: `cd worker && PYTHONPATH=. pytest`.
+Blur webhook + claim/retry: `cd web && npm test`. NMS vs cv2: `npm run blur:test-nms`.

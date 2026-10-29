@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export cv2.dnn.NMSBoxes results for nms-golden.json (dev only; not used at runtime)."""
+"""Export cv2.dnn.NMSBoxes results (dev helper for regenerating test vectors)."""
 import json
 import sys
 
