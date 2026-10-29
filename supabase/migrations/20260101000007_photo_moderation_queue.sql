@@ -40,6 +40,8 @@ create policy "Moderators read photo moderation audit"
   );
 
 revoke insert, update, delete on public.photo_moderation_audit_log from anon, authenticated;
+revoke select on public.photo_moderation_audit_log from anon;
+grant select on public.photo_moderation_audit_log to authenticated;
 
 create or replace function public.is_moderator(p_user_id uuid default auth.uid())
 returns boolean
