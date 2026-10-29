@@ -3,7 +3,7 @@
  * Keep in sync with Postgres defaults (e.g. merge radius in game functions) and mobile shells.
  */
 
-/** Default radius for duplicate pothole merge (matches SQL `find_nearby_pothole` / `merge_report_into_pothole`). */
+/** Default radius for duplicate pothole merge (matches SQL `pothole_merge_radius_meters` / `submit_spot`). */
 export const POTHOL_MERGE_RADIUS_METERS = 15
 
 /** Block live spot capture when GPS speed exceeds this (km/h). */

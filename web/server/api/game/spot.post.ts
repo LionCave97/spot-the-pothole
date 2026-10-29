@@ -1,5 +1,7 @@
 import type { SpotReportRequest, SpotReportResponse } from '@shared/types'
+import { POTHOL_MERGE_RADIUS_METERS } from '@shared/constants'
 import { ingestQuarantineSpotPhoto } from '../../utils/spotPhotoQuarantine'
+import { mapSubmitSpotResult } from '../../utils/mapSubmitSpotResult'
 
 export default defineEventHandler(async (event): Promise<SpotReportResponse> => {
   const userId = await requireUserId(event)
@@ -25,60 +27,28 @@ export default defineEventHandler(async (event): Promise<SpotReportResponse> => 
 
   const wardRow = Array.isArray(lookup) ? lookup[0] : lookup
 
-  const { data: pothole, error: potholeErr } = await supabase
-    .from('potholes')
-    .insert({
-      name: body.name,
-      location: `POINT(${body.lng} ${body.lat})`,
-      road_ref: body.road_ref ?? null,
-      authority: wardRow?.authority ?? null,
-      ward_id: wardRow?.ward_id ?? null,
-      photo_path: ingest.publishedPhotoPath,
-    })
-    .select('id')
-    .single()
-
-  if (potholeErr || !pothole) {
-    throw createError({ statusCode: 500, statusMessage: potholeErr?.message || 'Insert failed' })
-  }
-
-  const { data: report, error: reportErr } = await supabase
-    .from('reports')
-    .insert({
-      pothole_id: pothole.id,
-      reporter_id: userId,
-      photo_path: body.photo_path,
-      photo_moderation_status: ingest.moderationStatus,
-      published_photo_path: ingest.publishedPhotoPath,
-      location: `POINT(${body.lng} ${body.lat})`,
-    })
-    .select('id')
-    .single()
-
-  if (reportErr || !report) {
-    throw createError({ statusCode: 500, statusMessage: reportErr?.message || 'Report failed' })
-  }
-
-  const { data: mergedId, error: mergeErr } = await supabase.rpc('merge_report_into_pothole', {
-    p_report_id: report.id,
-    p_radius_m: 15,
+  const { data: submitRows, error: submitErr } = await supabase.rpc('submit_spot', {
+    p_reporter_id: userId,
+    p_lat: body.lat,
+    p_lng: body.lng,
+    p_name: body.name,
+    p_photo_path: body.photo_path,
+    p_photo_moderation_status: ingest.moderationStatus,
+    p_published_photo_path: ingest.publishedPhotoPath,
+    p_road_ref: body.road_ref ?? null,
+    p_ward_id: wardRow?.ward_id ?? null,
+    p_authority: wardRow?.authority ?? null,
+    p_radius_m: POTHOL_MERGE_RADIUS_METERS,
   })
 
-  if (mergeErr) {
-    throw createError({ statusCode: 500, statusMessage: mergeErr.message })
+  if (submitErr) {
+    throw createError({ statusCode: 500, statusMessage: submitErr.message })
   }
 
-  const finalId = (mergedId as string) || pothole.id
-  const merged = finalId !== pothole.id
-
-  return {
-    pothole_id: finalId,
-    report_id: report.id,
-    merged,
-    ward_id: wardRow?.ward_id ?? null,
-    authority: wardRow?.authority ?? null,
-    points_awarded: 0,
-    photo_moderation_status: ingest.moderationStatus,
-    published_photo_path: ingest.publishedPhotoPath,
+  const row = Array.isArray(submitRows) ? submitRows[0] : submitRows
+  if (!row?.pothole_id || !row?.report_id) {
+    throw createError({ statusCode: 500, statusMessage: 'submit_spot returned no row' })
   }
+
+  return mapSubmitSpotResult(row, ingest, wardRow)
 })
