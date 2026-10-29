@@ -21,6 +21,7 @@ After **DEV-209** (`20260101000005_harden_rls_and_rpc_security.sql`) lands, keep
 2. `20260101000001_game_functions.sql` — ward lookup, merge within ~15 m, confirmations / points
 3. `20260101000002_rls.sql` — RLS policies
 4. `20260101000005_harden_rls_and_rpc_security.sql` — RPC hardening, masked `*_public` views, profile/pothole write restrictions
+5. `20260101000007_photo_moderation_queue.sql` — moderator role, photo audit log, masked quarantine paths in `reports_public` (DEV-212)
 
 (`20260101000003_spot_photos_storage.sql` and `20260101000004_photo_moderation.sql` are in PR #2.)
 

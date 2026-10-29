@@ -12,6 +12,7 @@ export interface Profile {
   id: string
   username: string | null
   is_anonymous: boolean
+  is_moderator?: boolean
   points: number
   created_at: string
   onboarding_completed_at?: string | null
@@ -24,6 +25,44 @@ export interface PopiaConsent {
 }
 
 export const POPIA_NOTICE_VERSION = '2026-01-popia-v1' as const
+
+export interface NormalizedBlurRegion {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export interface PhotoModerationQueueItem {
+  report_id: string
+  pothole_id: string
+  pothole_name: string
+  reporter_id: string
+  quarantine_path: string
+  signed_url: string
+  signed_url_expires_at: string
+  photo_moderation_status: 'pending' | 'published' | 'rejected'
+  flag_count: number
+  created_at: string
+}
+
+export interface PhotoModerationQueueResponse {
+  items: PhotoModerationQueueItem[]
+}
+
+export interface PhotoModerationApproveRequest {
+  blur_regions?: NormalizedBlurRegion[]
+}
+
+export interface PhotoModerationRejectRequest {
+  reason: string
+}
+
+export interface PhotoModerationActionResponse {
+  report_id: string
+  photo_moderation_status: 'published' | 'rejected'
+  published_photo_path: string | null
+}
 
 export interface Ward {
   id: string
