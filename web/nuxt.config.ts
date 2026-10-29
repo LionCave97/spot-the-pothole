@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
+    preset: 'vercel',
     serverAssets: [
       {
         baseName: 'blur-models',

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nuxtjs",
+  "installCommand": "npm ci && python3 -m pip install --user onnx",
+  "buildCommand": "npm run blur:models && npm run build"
+}
