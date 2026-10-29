@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,8 +44,10 @@ import za.spotthepothole.app.ui.strings.AppStrings
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.rememberCoroutineScope
 import za.spotthepothole.app.auth.AuthSessionProvider
+import za.spotthepothole.app.data.AuthRepository
 import za.spotthepothole.app.spot.SpotUploadProgress
 import za.spotthepothole.app.spot.SpotUploadRepository
+import za.spotthepothole.app.validation.UsernameValidator
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
@@ -55,8 +59,25 @@ fun MapScreen(strings: AppStrings) {
 @Composable
 fun SpotScreen(
     strings: AppStrings,
+    auth: AuthRepository,
+    browseWithoutAccount: Boolean,
     authSessionProvider: AuthSessionProvider = AuthSessionProvider { null },
 ) {
+    val profile by auth.profile.collectAsState()
+
+    LaunchedEffect(Unit) {
+        auth.refreshSession()
+    }
+
+    if (profile?.onboardingCompletedAt == null) {
+        val message = when {
+            profile == null -> strings.spotRequiresAuth
+            else -> strings.finishSetup
+        }
+        ScreenScaffold(strings.spotTitle, message)
+        return
+    }
+
     val context = LocalContext.current
     var locationSample by remember { mutableStateOf<SpotLocationSample?>(null) }
     var gateMessage by remember { mutableStateOf(strings.spotWaitingForGps) }
@@ -317,8 +338,155 @@ fun LeaderboardScreen(strings: AppStrings) {
 }
 
 @Composable
-fun ProfileScreen(strings: AppStrings) {
-    ScreenScaffold(strings.profileTitle, strings.stubMessage)
+fun ProfileScreen(
+    strings: AppStrings,
+    auth: AuthRepository,
+    browseWithoutAccount: Boolean,
+    onBrowseWithoutAccount: () -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val profile by auth.profile.collectAsState()
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+    var isAnonymous by remember { mutableStateOf(false) }
+    var consent by remember { mutableStateOf(false) }
+    var onboardingStep by remember { mutableStateOf(0) }
+    var message by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        auth.refreshSession()
+    }
+
+    LaunchedEffect(profile) {
+        username = profile?.username.orEmpty()
+        isAnonymous = profile?.isAnonymous == true
+        if (profile != null && profile?.onboardingCompletedAt == null) {
+            onboardingStep = 1
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+    ) {
+        Text(text = strings.profileTitle, style = MaterialTheme.typography.headlineMedium)
+
+        when {
+            profile == null -> {
+                Text(strings.spotRequiresAuth, modifier = Modifier.padding(top = 12.dp))
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text(strings.email) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                )
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(strings.password) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                )
+                Button(
+                    onClick = {
+                        scope.launch {
+                            runCatching { auth.signIn(email, password) }
+                                .onFailure { message = it.message.orEmpty() }
+                        }
+                    },
+                    modifier = Modifier.padding(top = 8.dp),
+                ) { Text(strings.signInAction) }
+                Button(
+                    onClick = {
+                        scope.launch {
+                            runCatching { auth.signUp(email, password) }
+                                .onSuccess { message = strings.authCheckEmail }
+                                .onFailure { message = it.message.orEmpty() }
+                        }
+                    },
+                    modifier = Modifier.padding(top = 8.dp),
+                ) { Text(strings.signUpAction) }
+                Button(onClick = onBrowseWithoutAccount, modifier = Modifier.padding(top = 8.dp)) {
+                    Text(strings.browseWithoutAccount)
+                }
+            }
+
+            profile?.onboardingCompletedAt == null -> {
+                Text(strings.onboardingTitle, modifier = Modifier.padding(top = 12.dp))
+                if (onboardingStep == 1) {
+                    Text(strings.consentCheckbox, modifier = Modifier.padding(top = 8.dp))
+                    Checkbox(checked = consent, onCheckedChange = { consent = it })
+                    Button(
+                        enabled = consent,
+                        onClick = { onboardingStep = 2 },
+                    ) { Text(strings.onboardingContinue) }
+                } else {
+                    OutlinedTextField(
+                        value = username,
+                        onValueChange = { username = it },
+                        label = { Text(strings.usernameLabel) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Checkbox(checked = isAnonymous, onCheckedChange = { isAnonymous = it })
+                    Text(strings.anonymousLabel)
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                val err = UsernameValidator.validate(username)
+                                if (err != null) {
+                                    message = err
+                                    return@launch
+                                }
+                                runCatching {
+                                    auth.completeOnboarding(UsernameValidator.normalize(username), isAnonymous)
+                                    onboardingStep = 3
+                                }.onFailure { message = it.message.orEmpty() }
+                            }
+                        },
+                    ) { Text(strings.onboardingContinue) }
+                }
+                if (onboardingStep == 3) {
+                    Text(strings.permissionsLead, modifier = Modifier.padding(top = 8.dp))
+                    Text(strings.cameraReason)
+                    Text(strings.locationReason)
+                    Button(onClick = { onboardingStep = 0 }) { Text(strings.finishSetup) }
+                }
+            }
+
+            else -> {
+                Text(
+                    text = if (profile?.isAnonymous == true) strings.anonymousSpotter else profile?.username.orEmpty(),
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text(strings.usernameLabel) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                )
+                Checkbox(checked = isAnonymous, onCheckedChange = { isAnonymous = it })
+                Text(strings.anonymousLabel)
+                Button(onClick = { scope.launch { auth.signOut() } }, modifier = Modifier.padding(top = 8.dp)) {
+                    Text(strings.signOut)
+                }
+                Button(
+                    onClick = { scope.launch { runCatching { auth.deleteAccount() }.onFailure { message = it.message.orEmpty() } } },
+                    modifier = Modifier.padding(top = 8.dp),
+                ) { Text(strings.deleteAccount) }
+            }
+        }
+
+        if (message.isNotBlank()) {
+            Text(message, modifier = Modifier.padding(top = 12.dp))
+        }
+    }
 }
 
 @Composable

@@ -89,13 +89,61 @@
     "reports": "Reports",
     "confirmations": "Confirmations",
     "signIn": "Sign in",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "signedInAs": "Signed in",
+    "completeOnboarding": "Finish setup",
+    "spotRequiresAuth": "Sign in to spot or confirm potholes. You can still browse the map without an account."
   },
   "auth": {
     "email": "Email",
     "password": "Password",
     "magicLink": "Send magic link",
-    "orContinue": "Or continue with"
+    "orContinue": "Or continue without an account",
+    "signInTitle": "Sign in",
+    "signUpTitle": "Create account",
+    "signInAction": "Sign in",
+    "signUpAction": "Sign up",
+    "haveAccount": "Already have an account?",
+    "noAccount": "New here?",
+    "browseWithoutAccount": "Browse without an account",
+    "passwordHint": "At least 8 characters",
+    "checkEmail": "Check your email to confirm your account, then sign in.",
+    "noFullNameHint": "We only ask for email (private) and a public username during setup — never your full name."
+  },
+  "onboarding": {
+    "title": "Welcome",
+    "stepConsent": "Privacy & consent",
+    "stepProfile": "Your public name",
+    "stepPermissions": "Permissions",
+    "consentLead": "Before we collect anything, please read how we use your data under POPIA.",
+    "privacyNoticeTitle": "Privacy notice",
+    "privacyNoticeBody": "We store your account email privately (never shown publicly). When you spot a pothole we save the photo and GPS location to place it on the map and share with other players. We do not collect your full name. You can delete your account and data at any time in Profile.",
+    "consentCheckbox": "I agree to the privacy notice and consent to location and photo processing for spotting potholes.",
+    "continue": "Continue",
+    "usernameLabel": "Public username",
+    "usernameHint": "Letters, numbers, and underscores only. This is what others see — not your real name.",
+    "usernamePlaceholder": "e.g. crater_captain",
+    "anonymousLabel": "Appear anonymous on the map and leaderboard",
+    "anonymousHint": "Your spots still help the game, but other players will not see your username.",
+    "permissionsLead": "Next, your device will ask for camera and location when you spot a pothole.",
+    "cameraReason": "Camera: live photo at the pothole (required to spot).",
+    "locationReason": "Location: GPS places the pothole on the map (required to spot).",
+    "finish": "Finish setup",
+    "usernameError": {
+      "invalidFormat": "Use 3–24 characters: lowercase letters, numbers, and underscores.",
+      "blocked": "That username is not allowed.",
+      "looksLikeFullName": "Use a nickname — not your full name.",
+      "taken": "That username is already taken."
+    }
+  },
+  "account": {
+    "deleteTitle": "Delete account",
+    "deleteWarning": "This permanently deletes your account, profile, and game history. This cannot be undone.",
+    "deleteConfirm": "Delete my account and data",
+    "deleted": "Your account has been deleted.",
+    "updateUsername": "Update username",
+    "updateAnonymous": "Save privacy setting",
+    "consentRecorded": "Consent recorded"
   },
   "moderation": {
     "flag": "Flag content",

@@ -1,4 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { fileURLToPath } from 'node:url'
+
+const sharedRoot = fileURLToPath(new URL('../shared', import.meta.url))
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -14,6 +18,9 @@ export default defineNuxtConfig({
     },
   },
   alias: {
-    '@shared': '../shared',
+    '@shared': sharedRoot,
+    '@shared/types': `${sharedRoot}/types/index.ts`,
+    '@shared/validation/username': `${sharedRoot}/validation/username.ts`,
+    '@shared/strings/en.json': `${sharedRoot}/strings/en.json`,
   },
 })

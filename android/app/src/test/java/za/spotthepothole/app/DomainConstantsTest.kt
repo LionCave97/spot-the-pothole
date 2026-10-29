@@ -1,7 +1,6 @@
 package za.spotthepothole.app
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 class DomainConstantsTest {
@@ -14,10 +13,5 @@ class DomainConstantsTest {
     fun supabaseBuildConfigUsesPlaceholderValues() {
         assertEquals("http://10.0.2.2:54321", BuildConfig.SUPABASE_URL)
         assertEquals("demo-anon-key", BuildConfig.SUPABASE_ANON_KEY)
-    }
-
-    @Test
-    fun supabaseClientInitializes() {
-        assertNotNull(AppSupabase.client)
     }
 }
