@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "faceMinScore": 0.55,
+  "plateMinScore": 0.55,
+  "images": {
+    "plate-western-cape-02": {
+      "faces": 0,
+      "plates": 4
+    },
+    "plate-limpopo": {
+      "faces": 0,
+      "plates": 4
+    },
+    "plate-gauteng-bmw": {
+      "faces": 0,
+      "plates": 1
+    },
+    "plate-durban-taxi": {
+      "faces": 0,
+      "plates": 2
+    },
+    "plate-cape-1976": {
+      "faces": 0,
+      "plates": 1
+    },
+    "plate-historic-pretoria": {
+      "faces": 0,
+      "plates": 6
+    },
+    "plate-bophuthatswana": {
+      "faces": 0,
+      "plates": 4
+    },
+    "plate-lebowa": {
+      "faces": 0,
+      "plates": 4
+    },
+    "plate-natal-parks": {
+      "faces": 0,
+      "plates": 5
+    },
+    "negative-pothole-r512": {
+      "faces": 0,
+      "plates": 3
+    },
+    "negative-jhb-skyline": {
+      "faces": 0,
+      "plates": 0
+    },
+    "negative-wale-street": {
+      "faces": 0,
+      "plates": 2
+    },
+    "face-sa-portrait": {
+      "faces": 1,
+      "plates": 2
+    },
+    "car-show-jhb": {
+      "faces": 20,
+      "plates": 0
+    },
+    "car-show-lexus": {
+      "faces": 9,
+      "plates": 0
+    },
+    "motor-show-jhb": {
+      "faces": 12,
+      "plates": 1
+    },
+    "negative-high-court": {
+      "faces": 0,
+      "plates": 0
+    },
+    "negative-waterfront": {
+      "faces": 0,
+      "plates": 12
+    },
+    "negative-clock-tower": {
+      "faces": 0,
+      "plates": 0
+    },
+    "negative-wale-3544": {
+      "faces": 0,
+      "plates": 4
+    },
+    "negative-tracks": {
+      "faces": 0,
+      "plates": 0
+    },
+    "negative-hole-road": {
+      "faces": 0,
+      "plates": 0
+    },
+    "negative-more-holes": {
+      "faces": 0,
+      "plates": 0
+    },
+    "extra-24": {
+      "faces": 0,
+      "plates": 1
+    },
+    "extra-25": {
+      "faces": 0,
+      "plates": 1
+    },
+    "extra-26": {
+      "faces": 0,
+      "plates": 0
+    },
+    "extra-27": {
+      "faces": 0,
+      "plates": 6
+    },
+    "extra-28": {
+      "faces": 0,
+      "plates": 2
+    },
+    "extra-29": {
+      "faces": 0,
+      "plates": 0
+    },
+    "extra-30": {
+      "faces": 1,
+      "plates": 4
+    }
+  }
+}

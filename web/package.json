@@ -4,17 +4,25 @@
   "private": true,
   "scripts": {
     "lint": "eslint .",
-    "test": "vitest run",
+    "test": "vitest run && node --test server/lib/blur/*.test.mjs",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "blur:models": "node ./scripts/download-blur-models.mjs",
+    "blur:eval": "node ./scripts/run-blur-eval.mjs",
+    "blur:compare-python": "node ./scripts/compare-blur-detections.mjs",
+    "blur:compare": "node ./scripts/compare-blur-detections.mjs",
+    "blur:test-nms": "node ./scripts/test-nms-golden.mjs",
+    "blur:measure": "node ./scripts/measure-blur-spike.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
+    "@techstark/opencv-js": "^5.0.0-release.1",
     "nuxt": "^4.6.3",
-    "sharp": "^0.34.5",
+    "onnxruntime-web": "^1.31.1",
+    "sharp": "^0.35.5",
     "vue": "^3.5.44",
     "vue-router": "^5.4.0"
   },

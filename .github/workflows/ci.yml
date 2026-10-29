@@ -87,8 +87,26 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - run: npm run test
       - run: npm run lint
+      - run: pip install opencv-python-headless onnx
+      - run: npm run blur:models
+      - run: npm test
+      - run: npm run blur:test-nms
+      - uses: actions/cache@v4
+        with:
+          path: fixtures/blur-worker-eval/images
+          key: blur-fixtures-v1-${{ hashFiles('fixtures/blur-worker-eval/manifest.json') }}
+      - name: Download blur eval fixtures
+        id: blur_fixtures
+        continue-on-error: true
+        run: bash ../fixtures/blur-worker-eval/download-fixtures.sh
+      - name: Blur detection parity
+        if: steps.blur_fixtures.outcome == 'success'
+        run: npm run blur:compare
       - run: npm run build
         env:
           NUXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
