@@ -14,6 +14,26 @@ MANIFEST = ROOT / "manifest.json"
 OUT = ROOT / "images"
 
 
+def fetch_bytes(url: str) -> bytes:
+    visited: list[str] = []
+
+    class LoopSafeRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            if newurl in visited or req.full_url == newurl:
+                return None
+            visited.append(newurl)
+            return urllib.request.Request(
+                newurl,
+                headers=req.headers,
+                method=req.get_method(),
+            )
+
+    opener = urllib.request.build_opener(LoopSafeRedirect())
+    req = urllib.request.Request(url, headers={"User-Agent": "SpotThePothole-eval/1.0"})
+    with opener.open(req, timeout=120) as resp:
+        return resp.read()
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     data = json.loads(MANIFEST.read_text())
@@ -23,11 +43,9 @@ def main() -> None:
             continue
         url = img["downloadUrl"]
         print(f"Fetching {img['id']}...")
-        req = urllib.request.Request(url, headers={"User-Agent": "SpotThePothole-eval/1.0"})
         for attempt in range(5):
             try:
-                with urllib.request.urlopen(req, timeout=120) as resp:
-                    dest.write_bytes(resp.read())
+                dest.write_bytes(fetch_bytes(url))
                 break
             except urllib.error.HTTPError as err:
                 if err.code == 429 and attempt < 4:

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")"
-python3 download_fixtures.py
+exec python download_fixtures.py
