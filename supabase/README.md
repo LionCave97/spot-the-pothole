@@ -15,19 +15,12 @@ supabase status
 1. `20260101000000_extensions_and_core.sql` — PostGIS, tables, profile trigger
 2. `20260101000001_game_functions.sql` — ward lookup, merge within ~15 m, confirmations / points
 3. `20260101000002_rls.sql` — RLS policies
-<<<<<<< HEAD
 4. `20260101000003_spot_photos_storage.sql` — quarantine + public photo buckets
 5. `20260101000004_photo_moderation.sql` — photo moderation columns and status enum
 6. `20260101000005_harden_rls_and_rpc_security.sql` — RPC hardening, masked `*_public` views, profile/pothole write restrictions (DEV-209)
 7. `20260101000006_auth_onboarding_popia.sql` — POPIA consent, username validation, onboarding RPC, account deletion (DEV-200)
 8. `20260101000007_photo_moderation_queue.sql` — moderator role, photo audit log, masked quarantine paths in `reports_public` (DEV-212)
 9. `20260101000008_photo_blur_queue.sql` — blur attempt counter, processing lock, `claim_photo_blur_report` RPC (DEV-211)
-=======
-4. `20260101000005_harden_rls_and_rpc_security.sql` — RPC hardening, masked `*_public` views, profile/pothole write restrictions
-5. `20260101000008_photo_blur_queue.sql` — blur attempt counter, processing lock, `claim_photo_blur_report` RPC
-
-(`20260101000003_spot_photos_storage.sql` and `20260101000004_photo_moderation.sql` are in PR #2.)
->>>>>>> e350227 ([skip ci] chore(supabase): rename blur queue migration to 000008, PG16 verify)
 
 ## Photo blur webhooks
 
@@ -37,6 +30,13 @@ After deploy, configure **Database Webhooks** (Dashboard → Database → Webhoo
 - `public.reports` **INSERT** where `photo_moderation_status = pending`
 
 Target: `https://<nuxt-host>/api/internal/blur` with header **`X-Webhook-Secret`** from Vault / env (`BLUR_WEBHOOK_SECRET`). Never store the secret in migrations or git.
+
+## Security tests
+
+```bash
+supabase db reset
+bash supabase/tests/run_security_tests.sh
+```
 
 ## Local PostgreSQL 16 (no Supabase CLI stack)
 
@@ -48,7 +48,7 @@ sudo service postgresql start
 sudo -u postgres bash supabase/scripts/run_migrations_pg16.sh
 ```
 
-Runs all `migrations/*.sql`, `seed.sql`, `security_tests/security_hardening_test.sql`, and `tests/photo_blur_claim_test.sql`.
+Runs all `migrations/*.sql`, `seed.sql`, and `security_tests/*_test.sql` (including `photo_blur_claim_test.sql`).
 
 ## Seed
 

@@ -30,6 +30,6 @@ echo "==> security_hardening_test.sql"
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$ROOT/security_tests/security_hardening_test.sql"
 
 echo "==> photo_blur_claim_test.sql"
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$ROOT/tests/photo_blur_claim_test.sql"
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$ROOT/security_tests/photo_blur_claim_test.sql"
 
 echo "OK: migrations + security + photo blur claim tests on ${DATABASE_URL}"
