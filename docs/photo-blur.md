@@ -26,7 +26,7 @@ Configure in Supabase (values from **Vault** or project secrets — never commit
 2. **Report webhook** — table `public.reports`, event `INSERT`, filter `photo_moderation_status = 'pending'`.  
    Same URL and secret. Ensures processing runs after `POST /api/game/spot` links the row.
 
-Optional: enable the commented **`pg_net`** pattern in migration `20260328100000_photo_blur_queue.sql` once `blur_webhook_url` and Vault secret are set in the database.
+Optional: enable the commented **`pg_net`** pattern in migration `20260101000008_photo_blur_queue.sql` once `blur_webhook_url` and Vault secret are set in the database.
 
 Env (see `web/.env.example`): `BLUR_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, bucket overrides.
 
